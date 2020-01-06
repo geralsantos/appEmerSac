@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">AppEmerSac</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Juan Peréz</string>
+    <string name="nav_header_subtitle">juan.perez@emersac.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Monitorear Colaborador</string>
+    <!-- TODO RELACIONADO A GEOLOCALIZACIÓN DE MONTAJE INICIO -->
+    <string name="menu_geolocalizacion_montaje">Geolocalización Montaje</string>
+    <string name="titulo_nav_geolocalizacion_montaje">REGISTRAR ACTIVIDAD</string>
+    <string name="opcion_eliminar_imagen">Eliminar Archivo</string>
+    <!-- TODO RELACIONADO A GEOLOCALIZACIÓN DE MONTAJE FIN-->
+
+    <!-- TODO RELACIONADO A TAREO TRABAJADOR INICIO -->
+    <string name="menu_tareo_trabajador">Tareo Trabajador</string>
+    <string name="titulo_nav_tareo_trabajador">ACTIVIDADES DE TRABAJADOR</string>
+    <!-- TODO RELACIONADO A TAREO TRABAJADOR FIN-->
+
+    <string name="menu_gallery">Galería de Archivos</string>
+    <string name="menu_tools">Actividades Registradas</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_send">Send</string>
+    <string name="menu_salir">Salir</string>
+    <string name="menu_geral">Geral</string>
+    <string name="title_activity_login">Emer Sac</string>
+    <string name="prompt_email">Usuario</string>
+    <string name="prompt_password">Contraseña</string>
+    <string name="action_sign_in">Ingresar</string>
+    <string name="action_sign_in_short">Ingresar</string>
+    <string name="welcome">"Bienvenida/o "</string>
+    <string name="invalid_username">No es un usuario valido</string>
+    <string name="invalid_password">Contraseña deberia ser mayor a 5 caracteres</string>
+    <string name="login_failed">"Ha ocurrido un error, las credenciales son incorrectas"</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

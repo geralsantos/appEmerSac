@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.tareoTrabajador.TareoTrabajadorFragment"
+    android:id="@+id/fragment_layout_tareo_trabajador"
+    android:background="#fff"
+    >
+
+    <ScrollView
+        android:id="@+id/scrollView_geo_map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            >
+
+            <TextView
+                android:id="@+id/textoformatohoras"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Formato de 24 horas"
+                android:textSize="20dp"
+                app:fontFamily="@font/ubuntu"
+
+                />
+
+            <TextView
+                android:id="@+id/id_horainicio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hora Inicio"
+                android:textSize="20dp"
+                android:layout_marginTop="20dp"
+                app:fontFamily="@font/ubuntu"
+                android:layout_below="@+id/textoformatohoras"
+
+                />
+
+            <EditText
+                android:id="@+id/edittext_horainicio"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:inputType="numberPassword"
+                android:layout_below="@+id/id_horainicio"
+                android:maxLength="2"
+                android:textAlignment="center"
+                />
+
+            <TextView
+                android:id="@+id/id_puntos1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=":"
+                android:textSize="20dp"
+                android:layout_marginTop="13dp"
+                app:fontFamily="@font/ubuntu"
+                android:layout_below="@+id/id_horainicio"
+                android:layout_toRightOf="@+id/edittext_horainicio"
+
+                />
+            <EditText
+                android:id="@+id/edittext_mininicio"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+
+                android:inputType="numberPassword"
+                android:maxLength="2"
+                android:layout_below="@+id/id_horainicio"
+                android:layout_toRightOf="@+id/edittext_horainicio"
+                android:textAlignment="center"
+
+
+                />
+
+            <TextView
+                android:id="@+id/id_horafin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hora Fin"
+                android:textSize="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="42dp"
+                app:fontFamily="@font/ubuntu"
+                android:layout_below="@+id/textoformatohoras"
+                android:layout_toRightOf="@+id/id_horainicio"
+
+                />
+            <EditText
+                android:id="@+id/edittext_horafin"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:inputType="numberPassword"
+                android:maxLength="2"
+                android:layout_below="@+id/id_horainicio"
+                android:layout_toRightOf="@+id/edittext_mininicio"
+                android:layout_marginLeft="50dp"
+                android:textAlignment="center"
+
+                />
+
+            <TextView
+                android:id="@+id/id_puntos2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=":"
+                android:textSize="20dp"
+                android:layout_marginTop="13dp"
+                app:fontFamily="@font/ubuntu"
+                android:layout_below="@+id/id_horainicio"
+                android:layout_toRightOf="@+id/edittext_horafin"
+                android:textAlignment="center"
+
+                />
+            <EditText
+                android:id="@+id/edittext_minfin"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:inputType="numberPassword"
+                android:maxLength="2"
+                android:layout_below="@+id/id_horainicio"
+                android:layout_toRightOf="@+id/edittext_horafin"
+                android:textAlignment="center"
+
+                />
+
+            <!--TextView
+                android:id="@+id/id_titulo_listado_proyectos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Seleccione un proyecto"
+                android:textSize="20dp"
+                android:layout_marginTop="20dp"
+                app:fontFamily="@font/ubuntu"
+                android:layout_below="@+id/edittext_minfin"
+
+                /-->
+
+            <Spinner
+                android:id="@+id/spinner_tareo_trabajador_listado_proyectos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/edittext_minfin"
+                android:layout_marginTop="35dp"
+                app:fontFamily="@font/ubuntu"
+                android:elevation="5dp"
+                android:background="#121212e0"
+                android:padding="15dp"
+                />
+
+            <!--TextView
+                android:id="@+id/id_titulo_listado_actividad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Seleccione una actividad"
+                android:textSize="20dp"
+                android:layout_marginTop="20dp"
+                app:fontFamily="@font/ubuntu"
+                android:layout_below="@+id/spinner_tareo_trabajador_listado_proyectos"
+                /-->
+
+            <Spinner
+                android:id="@+id/spinner_tareo_trabajador_listado_actividades"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/spinner_tareo_trabajador_listado_proyectos"
+                android:layout_marginTop="30dp"
+                app:fontFamily="@font/ubuntu"
+                android:background="#121212e0"
+                android:padding="15dp"
+                />
+
+            <Button
+                android:id="@+id/btn_abrir_dialog_seleccione_trabajador"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/spinner_tareo_trabajador_listado_actividades"
+                android:layout_marginTop="140dp"
+                android:background="#E7133C"
+                android:text="Seleccione Trabajador"
+                android:textColor="#fff"
+
+                />
+            <!--Button
+                android:id="@+id/btn_ver_actividades_registradas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/btn_abrir_dialog_seleccione_trabajador"
+                android:layout_marginTop="20dp"
+                android:background="#E7133C"
+                android:text="Ver Actividades Registradas"
+                android:textColor="#fff"
+
+                /-->
+
+            <Button
+                android:id="@+id/btn_guardar_actividad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Guardar"
+                android:layout_marginTop="20dp"
+                android:layout_below="@id/btn_abrir_dialog_seleccione_trabajador"
+                android:background="#2196F3"
+                android:textColor="#fff"
+                />
+
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

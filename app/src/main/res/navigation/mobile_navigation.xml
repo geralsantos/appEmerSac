@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/nav_geomap_montaje">
+
+    <fragment
+        android:id="@+id/nav_geomap_montaje"
+        android:name="com.example.myapplication.ui.geolocalizacionMontaje.GeolocalizacionMontajeFragment"
+        android:label="@string/menu_geolocalizacion_montaje"
+        tools:layout="@layout/geolocalizacion_montaje_fragment" />
+
+    <fragment
+        android:id="@+id/nav_audio_recorder"
+        android:name="com.example.myapplication.ui.audio_recorder.AudioRecorderFragment"
+        android:label="@string/menu_geolocalizacion_montaje"
+        tools:layout="@layout/fragment_audio_recorder" />
+
+    <fragment
+        android:id="@+id/nav_actividades_registradas"
+        android:name="com.example.myapplication.ui.actividades_registradas.ActividadesRegistradasFragment"
+        android:label="@string/menu_tools"
+        tools:layout="@layout/fragment_actividades_registradas" />
+
+    <fragment
+        android:id="@+id/nav_share"
+        android:name="com.example.myapplication.ui.share.ShareFragment"
+        android:label="@string/menu_share"
+        tools:layout="@layout/fragment_share" />
+
+    <fragment
+        android:id="@+id/nav_send"
+        android:name="com.example.myapplication.ui.send.SendFragment"
+        android:label="@string/menu_send"
+        tools:layout="@layout/fragment_send" />
+    <fragment
+        android:id="@+id/nav_tareo_colab"
+        android:name="com.example.myapplication.ui.tareoTrabajador.TareoTrabajadorFragment"
+        android:label="@string/menu_tareo_trabajador"
+        tools:layout="@layout/tareo_trabajador_fragment" />
+    <fragment
+        android:id="@+id/nav_gallery"
+        android:name="com.example.myapplication.ui.gallery.GalleryFragment"
+        android:label="@string/menu_gallery"
+        tools:layout="@layout/fragment_gallery" />
+</navigation>

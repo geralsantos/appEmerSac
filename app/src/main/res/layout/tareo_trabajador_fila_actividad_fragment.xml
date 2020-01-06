@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    >
+
+    <TextView
+        android:id="@+id/trabajador"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18dp"
+        android:text="0015184 - POMA SANTOS, GERAL"
+        android:textAlignment="center"
+        app:fontFamily="@font/ubuntu"
+        />
+
+    <TextView
+        android:id="@+id/texto_horainicio"
+        android:layout_width="60dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/trabajador"
+        android:text="H. Inicio:"
+        android:layout_marginTop="10dp"
+        app:fontFamily="@font/ubuntu"
+        />
+
+    <TextView
+        android:id="@+id/horainicio"
+        android:layout_width="70dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/trabajador"
+        android:layout_toRightOf="@+id/texto_horainicio"
+        android:text="21:00"
+        android:layout_marginTop="10dp"
+        app:fontFamily="@font/ubuntu"
+        />
+
+    <TextView
+        android:id="@+id/texto_horafin"
+        android:layout_width="50dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/trabajador"
+        android:layout_toLeftOf="@+id/horafin"
+        android:text="H. Fin:"
+        android:layout_marginTop="10dp"
+        app:fontFamily="@font/ubuntu"
+        />
+
+    <TextView
+        android:id="@+id/horafin"
+        android:layout_width="50dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/trabajador"
+        android:text="08:00"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentRight="true"
+        app:fontFamily="@font/ubuntu"
+        android:textAlignment="textEnd"
+        android:gravity="end"
+        />
+
+    <TextView
+        android:id="@+id/texto_horadiurna"
+        android:layout_width="70dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/horainicio"
+        android:text="H. Diurnas:"
+        android:layout_marginTop="10dp"
+        app:fontFamily="@font/ubuntu"
+        />
+
+    <TextView
+        android:id="@+id/horadiurna"
+        android:layout_width="50dp"
+        android:layout_height="20dp"
+        android:text="03:00"
+        android:layout_below="@+id/horainicio"
+        android:layout_toRightOf="@+id/texto_horadiurna"
+        android:layout_marginTop="10dp"
+        app:fontFamily="@font/ubuntu"
+        />
+
+    <TextView
+        android:id="@+id/texto_renddiurno"
+        android:layout_width="90dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/texto_horafin"
+        android:layout_toLeftOf="@+id/rendDiurno"
+        android:text="Rend. Diurno:"
+        android:layout_marginTop="10dp"
+        app:fontFamily="@font/ubuntu"
+        />
+
+    <TextView
+        android:id="@+id/rendDiurno"
+        android:layout_width="50dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/horafin"
+        android:layout_alignParentRight="true"
+        android:text="10:00"
+        android:layout_marginTop="10dp"
+        app:fontFamily="@font/ubuntu"
+        android:textAlignment="textEnd"
+        android:gravity="end"
+        />
+
+    <TextView
+        android:id="@+id/texto_horasnocturnas"
+        android:layout_width="90dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/texto_horadiurna"
+        android:text="H. Nocturnas:"
+        android:layout_marginTop="10dp"
+        app:fontFamily="@font/ubuntu"
+        />
+
+    <TextView
+        android:id="@+id/horasNocturnas"
+        android:layout_width="50dp"
+        android:layout_height="20dp"
+        android:text="07:00"
+        android:layout_below="@+id/horadiurna"
+        android:layout_toRightOf="@+id/texto_horasnocturnas"
+        android:layout_marginTop="10dp"
+        app:fontFamily="@font/ubuntu"
+        />
+
+    <TextView
+        android:id="@+id/texto_rendnocturno"
+        android:layout_width="110dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/texto_renddiurno"
+        android:layout_toLeftOf="@+id/rendNocturno"
+        android:text="Rend. Nocturno:"
+        android:layout_marginTop="10dp"
+        app:fontFamily="@font/ubuntu"
+        />
+
+    <TextView
+        android:id="@+id/rendNocturno"
+        android:layout_width="50dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/rendDiurno"
+        android:layout_alignParentRight="true"
+        android:text="10:00"
+        android:layout_marginTop="10dp"
+        android:textAlignment="textEnd"
+        android:gravity="end"
+        app:fontFamily="@font/ubuntu"
+        />
+
+</RelativeLayout>

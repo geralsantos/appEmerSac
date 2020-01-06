@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.geolocalizacionMontaje.GeolocalizacionMontajeFragment"
+    android:id="@+id/fragment_layout_geomap"
+    android:tag="fragment_layout_geomap"
+    android:background="#fff"
+    >
+
+        <ScrollView
+            android:id="@+id/scrollView_geo_map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                >
+
+                <TextView
+                    android:id="@+id/titulo_nav"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/titulo_nav_geolocalizacion_montaje"
+                    android:textAlignment="center"
+                    android:textSize="20dp"
+                    android:layout_marginTop="20dp"
+                    app:fontFamily="@font/ubuntu" />
+
+                <TextView
+                    android:id="@+id/titulo_litado_proyectos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Seleccione un proyecto"
+                    android:textSize="15dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_below="@+id/titulo_nav"
+                    app:fontFamily="@font/ubuntu" />
+
+                <Spinner
+                    android:id="@+id/spinner_geo_montaje_listado_proyectos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/titulo_litado_proyectos"
+                    android:layout_marginTop="10dp"
+                    app:fontFamily="@font/ubuntu" />
+
+                <TextView
+                    android:id="@+id/titulo_litado_estado_proyecto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Seleccione estado del proyecto"
+                    android:textSize="15dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_below="@+id/spinner_geo_montaje_listado_proyectos"
+                    app:fontFamily="@font/ubuntu" />
+
+                <Spinner
+                    android:id="@+id/spinner_geo_montaje_listado_estados_proyecto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/titulo_litado_estado_proyecto"
+                    android:layout_marginTop="20dp"
+                    app:fontFamily="@font/ubuntu" />
+
+                <TextView
+                    android:id="@+id/titulo_litado_incidencia_proyecto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Seleccione incidencia del proyecto"
+                    android:textSize="15dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_below="@+id/spinner_geo_montaje_listado_estados_proyecto"
+                    app:fontFamily="@font/ubuntu" />
+                <Button
+                    android:id="@+id/btn_abrir_dialog_seleccione_incidencias"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/titulo_litado_incidencia_proyecto"
+                    android:layout_marginTop="20dp"
+                    android:background="#E7133C"
+                    android:text="Seleccione Incidencias"
+                    android:textColor="#fff"
+
+                    />
+                <!--Spinner
+                    android:id="@+id/spinner_geo_montaje_listado_incidencia_proyecto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/titulo_litado_incidencia_proyecto"
+                    android:layout_marginTop="20dp"
+                    app:fontFamily="@font/ubuntu" /-->
+                <TextView
+                    android:id="@+id/titulo_descripcion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Agregue una descripción"
+                    android:textSize="15dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_below="@+id/btn_abrir_dialog_seleccione_incidencias"
+                    app:fontFamily="@font/ubuntu" />
+
+                <EditText
+                    android:id="@+id/edittext_geo_montaje_descripcion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/titulo_descripcion"
+
+                    />
+
+                <TextView
+                    android:id="@+id/titulo_porcentaje_avance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Seleccione el porcentaje de avance (%)"
+                    android:textSize="15dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_below="@+id/edittext_geo_montaje_descripcion"
+                    app:fontFamily="@font/ubuntu" />
+
+                <Spinner
+                    android:id="@+id/spnPorcentajeAvance"
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/titulo_porcentaje_avance"
+                    android:layout_marginTop="10dp"
+
+                    />
+
+                <ImageButton
+                    android:id="@+id/btn_geo_montaje_camara"
+                    android:layout_width="112dp"
+                    android:layout_height="72dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_below="@+id/spnPorcentajeAvance"
+                    android:src="@drawable/ic_photo_camera_black_48"
+                    android:background="#e3e2de"
+                    />
+
+
+                <ImageButton
+                    android:id="@+id/btn_geo_montaje_video"
+                    android:layout_width="112dp"
+                    android:layout_height="72dp"
+                    android:layout_below="@+id/spnPorcentajeAvance"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_toRightOf="@+id/btn_geo_montaje_camara"
+                    android:background="#e3e2de"
+                    android:src="@drawable/ic_videocam_black_48"
+
+                    />
+
+                <ImageButton
+                    android:id="@+id/btn_geo_montaje_audio"
+                    android:layout_width="112dp"
+                    android:layout_height="72dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_below="@+id/spnPorcentajeAvance"
+                    android:layout_toRightOf="@+id/btn_geo_montaje_video"
+                    android:src="@drawable/ic_mic_black_48"
+                    android:background="#e3e2de"
+                    android:layout_marginLeft="10dp"
+
+                    />
+
+                <Button
+                    android:id="@+id/btn_geo_montaje_verfotos"
+                    android:layout_width="112dp"
+                    android:layout_height="30dp"
+                    android:layout_below="@+id/btn_geo_montaje_camara"
+                    android:background="#E7133C"
+                    android:textColor="#fff"
+                    android:text="Ver Fotos"
+                    android:textSize="15dp"
+                    android:layout_marginTop="10dp"
+
+
+                    />
+
+                <Button
+                    android:id="@+id/btn_geo_montaje_vervideos"
+                    android:layout_width="112dp"
+                    android:layout_height="30dp"
+                    android:layout_below="@+id/btn_geo_montaje_video"
+                    android:layout_toRightOf="@+id/btn_geo_montaje_verfotos"
+                    android:background="#E7133C"
+                    android:textColor="#fff"
+                    android:text="Ver Videos"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:textSize="15dp"
+
+                    />
+
+                <Button
+                    android:id="@+id/btn_geo_montaje_veraudios"
+                    android:layout_width="112dp"
+                    android:layout_height="30dp"
+                    android:layout_below="@+id/btn_geo_montaje_audio"
+                    android:layout_toRightOf="@+id/btn_geo_montaje_vervideos"
+                    android:background="#E7133C"
+                    android:textColor="#fff"
+                    android:text="Ver Audios"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:textSize="15dp"
+
+                    />
+
+                <Button
+                    android:id="@+id/btn_grabar_geo_map"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/btn_geo_montaje_audio"
+                    android:layout_centerInParent="true"
+                    android:layout_marginTop="60dp"
+                    android:layout_marginBottom="30dp"
+                    android:background="#2196F3"
+                    android:textColor="#fff"
+                    android:text="Guardar actividad"
+
+                    />
+
+            </RelativeLayout>
+
+        </ScrollView>
+
+
+
+</FrameLayout>
