@@ -9,25 +9,30 @@
 
     <string name="menu_home">Monitorear Colaborador</string>
     <!-- TODO RELACIONADO A GEOLOCALIZACIÓN DE MONTAJE INICIO -->
-    <string name="menu_geolocalizacion_montaje">Geolocalización Montaje</string>
-    <string name="titulo_nav_geolocalizacion_montaje">REGISTRAR ACTIVIDAD</string>
+    <string name="menu_geolocalizacion_montaje">REGISTRO DE AVANCE</string>
+    <string name="titulo_nav_geolocalizacion_montaje">REGISTRO DE AVANCE</string>
     <string name="opcion_eliminar_imagen">Eliminar Archivo</string>
     <!-- TODO RELACIONADO A GEOLOCALIZACIÓN DE MONTAJE FIN-->
 
     <!-- TODO RELACIONADO A TAREO TRABAJADOR INICIO -->
-    <string name="menu_tareo_trabajador">Tareo Trabajador</string>
+    <string name="menu_tareo_trabajador">TAREO TRABAJADOR</string>
     <string name="titulo_nav_tareo_trabajador">ACTIVIDADES DE TRABAJADOR</string>
     <!-- TODO RELACIONADO A TAREO TRABAJADOR FIN-->
 
+    <string name="menu_actividades_registradas">ACTIVIDADES REGISTRADAS</string>
+    <string name="menu_tareo_actividades">TAREO SIN REGISTRAR</string>
+    <string name="opcion_editar_registro">Modificar</string>
+
+    <string name="menu_geomap_actividades_registradas">ACTIVIDADES REGISTRADAS</string>
     <string name="menu_gallery">Galería de Archivos</string>
     <string name="menu_tools">Actividades Registradas</string>
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
     <string name="menu_salir">Salir</string>
     <string name="menu_geral">Geral</string>
-    <string name="title_activity_login">Emer Sac</string>
-    <string name="prompt_email">Usuario</string>
-    <string name="prompt_password">Contraseña</string>
+    <string name="title_activity_login">EMER S.A.C</string>
+    <string name="prompt_email">USUARIO</string>
+    <string name="prompt_password">CONTRASEÑA</string>
     <string name="action_sign_in">Ingresar</string>
     <string name="action_sign_in_short">Ingresar</string>
     <string name="welcome">"Bienvenida/o "</string>

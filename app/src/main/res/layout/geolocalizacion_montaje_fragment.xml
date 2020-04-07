@@ -23,7 +23,7 @@
                 android:layout_marginRight="10dp"
                 >
 
-                <TextView
+                <!--TextView
                     android:id="@+id/titulo_nav"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -31,9 +31,12 @@
                     android:textAlignment="center"
                     android:textSize="20dp"
                     android:layout_marginTop="20dp"
-                    app:fontFamily="@font/ubuntu" />
+                    app:fontFamily="@font/latoregular"
+                    android:textColor="#0050B2"
+                    /-->
 
-                <TextView
+
+                <!--TextView
                     android:id="@+id/titulo_litado_proyectos"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -41,17 +44,28 @@
                     android:textSize="15dp"
                     android:layout_marginTop="20dp"
                     android:layout_below="@+id/titulo_nav"
-                    app:fontFamily="@font/ubuntu" />
+                    app:fontFamily="@font/latoregular" /-->
 
                 <Spinner
                     android:id="@+id/spinner_geo_montaje_listado_proyectos"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/titulo_litado_proyectos"
-                    android:layout_marginTop="10dp"
-                    app:fontFamily="@font/ubuntu" />
+                    android:layout_marginTop="15dp"
+                    app:fontFamily="@font/latoregular"
+                    style="@style/Widget.AppCompat.Spinner.Underlined"
+                    />
 
-                <TextView
+                <Spinner
+                    android:id="@+id/spinner_geo_montaje_listado_cronog"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/spinner_geo_montaje_listado_proyectos"
+                    android:layout_marginTop="20dp"
+                    app:fontFamily="@font/latoregular"
+                    style="@style/Widget.AppCompat.Spinner.Underlined"
+
+                    />
+                <!--TextView
                     android:id="@+id/titulo_litado_estado_proyecto"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -59,17 +73,19 @@
                     android:textSize="15dp"
                     android:layout_marginTop="30dp"
                     android:layout_below="@+id/spinner_geo_montaje_listado_proyectos"
-                    app:fontFamily="@font/ubuntu" />
+                    app:fontFamily="@font/latoregular" /-->
 
                 <Spinner
                     android:id="@+id/spinner_geo_montaje_listado_estados_proyecto"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/titulo_litado_estado_proyecto"
+                    android:layout_below="@+id/spinner_geo_montaje_listado_cronog"
                     android:layout_marginTop="20dp"
-                    app:fontFamily="@font/ubuntu" />
+                    app:fontFamily="@font/latoregular"
+                    style="@style/Widget.AppCompat.Spinner.Underlined"
+                    />
 
-                <TextView
+                <!--TextView
                     android:id="@+id/titulo_litado_incidencia_proyecto"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -77,17 +93,19 @@
                     android:textSize="15dp"
                     android:layout_marginTop="30dp"
                     android:layout_below="@+id/spinner_geo_montaje_listado_estados_proyecto"
-                    app:fontFamily="@font/ubuntu" />
+                    app:fontFamily="@font/latoregular" /-->
                 <Button
                     android:id="@+id/btn_abrir_dialog_seleccione_incidencias"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/titulo_litado_incidencia_proyecto"
+                    android:layout_below="@id/spinner_geo_montaje_listado_estados_proyecto"
                     android:layout_marginTop="20dp"
-                    android:background="#E7133C"
+                    android:background="#f6f6f6"
+                    android:gravity="left|center_vertical"
                     android:text="Seleccione Incidencias"
-                    android:textColor="#fff"
-
+                    android:textColor="#0050B2"
+                    app:fontFamily="@font/latoregular"
+                    android:paddingLeft="10dp"
                     />
                 <!--Spinner
                     android:id="@+id/spinner_geo_montaje_listado_incidencia_proyecto"
@@ -102,43 +120,25 @@
                     android:layout_height="wrap_content"
                     android:text="Agregue una descripción"
                     android:textSize="15dp"
-                    android:layout_marginTop="30dp"
+                    android:layout_marginTop="20dp"
                     android:layout_below="@+id/btn_abrir_dialog_seleccione_incidencias"
-                    app:fontFamily="@font/ubuntu" />
+                    app:fontFamily="@font/latoregular" />
 
                 <EditText
                     android:id="@+id/edittext_geo_montaje_descripcion"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/titulo_descripcion"
-
+                    app:fontFamily="@font/latoregular"
                     />
 
-                <TextView
-                    android:id="@+id/titulo_porcentaje_avance"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Seleccione el porcentaje de avance (%)"
-                    android:textSize="15dp"
-                    android:layout_marginTop="30dp"
-                    android:layout_below="@+id/edittext_geo_montaje_descripcion"
-                    app:fontFamily="@font/ubuntu" />
-
-                <Spinner
-                    android:id="@+id/spnPorcentajeAvance"
-                    android:layout_width="160dp"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/titulo_porcentaje_avance"
-                    android:layout_marginTop="10dp"
-
-                    />
 
                 <ImageButton
                     android:id="@+id/btn_geo_montaje_camara"
                     android:layout_width="112dp"
                     android:layout_height="72dp"
                     android:layout_marginTop="30dp"
-                    android:layout_below="@+id/spnPorcentajeAvance"
+                    android:layout_below="@+id/edittext_geo_montaje_descripcion"
                     android:src="@drawable/ic_photo_camera_black_48"
                     android:background="#e3e2de"
                     />
@@ -148,7 +148,7 @@
                     android:id="@+id/btn_geo_montaje_video"
                     android:layout_width="112dp"
                     android:layout_height="72dp"
-                    android:layout_below="@+id/spnPorcentajeAvance"
+                    android:layout_below="@+id/edittext_geo_montaje_descripcion"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="30dp"
                     android:layout_toRightOf="@+id/btn_geo_montaje_camara"
@@ -162,7 +162,7 @@
                     android:layout_width="112dp"
                     android:layout_height="72dp"
                     android:layout_marginTop="30dp"
-                    android:layout_below="@+id/spnPorcentajeAvance"
+                    android:layout_below="@+id/edittext_geo_montaje_descripcion"
                     android:layout_toRightOf="@+id/btn_geo_montaje_video"
                     android:src="@drawable/ic_mic_black_48"
                     android:background="#e3e2de"
@@ -175,12 +175,12 @@
                     android:layout_width="112dp"
                     android:layout_height="30dp"
                     android:layout_below="@+id/btn_geo_montaje_camara"
-                    android:background="#E7133C"
-                    android:textColor="#fff"
+                    android:background="#d6d7da"
+                    android:textColor="#0050B2"
                     android:text="Ver Fotos"
                     android:textSize="15dp"
                     android:layout_marginTop="10dp"
-
+                    app:fontFamily="@font/latoregular"
 
                     />
 
@@ -190,13 +190,13 @@
                     android:layout_height="30dp"
                     android:layout_below="@+id/btn_geo_montaje_video"
                     android:layout_toRightOf="@+id/btn_geo_montaje_verfotos"
-                    android:background="#E7133C"
-                    android:textColor="#fff"
+                    android:background="#d6d7da"
+                    android:textColor="#0050B2"
                     android:text="Ver Videos"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="10dp"
                     android:textSize="15dp"
-
+                    app:fontFamily="@font/latoregular"
                     />
 
                 <Button
@@ -205,33 +205,59 @@
                     android:layout_height="30dp"
                     android:layout_below="@+id/btn_geo_montaje_audio"
                     android:layout_toRightOf="@+id/btn_geo_montaje_vervideos"
-                    android:background="#E7133C"
-                    android:textColor="#fff"
-                    android:text="Ver Audios"
+                    android:background="#d6d7da"
+                    android:textColor="#0050B2"
+                    android:text="Ver AUDIOS"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="10dp"
                     android:textSize="15dp"
-
+                    app:fontFamily="@font/latoregular"
                     />
-
+                <Button
+                    android:id="@+id/btn_ver_actividades_registradas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/btn_geo_montaje_veraudios"
+                    android:layout_centerInParent="true"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/btn_rounded_secondary"
+                    android:text="Ver Actividades Registradas"
+                    android:textColor="#0050B2"
+                    app:fontFamily="@font/latoregular"
+                    android:layout_marginLeft="100dp"
+                    />
                 <Button
                     android:id="@+id/btn_grabar_geo_map"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/btn_geo_montaje_audio"
+                    android:layout_below="@+id/btn_ver_actividades_registradas"
                     android:layout_centerInParent="true"
-                    android:layout_marginTop="60dp"
-                    android:layout_marginBottom="30dp"
-                    android:background="#2196F3"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginLeft="150dp"
                     android:textColor="#fff"
-                    android:text="Guardar actividad"
+                    android:text="Guardar"
+                    app:fontFamily="@font/latoregular"
+                    android:background="@drawable/btn_rounded"
+                    android:layout_marginBottom="40dp"
 
                     />
+
+
+
 
             </RelativeLayout>
 
         </ScrollView>
 
+    <ProgressBar
+        android:id="@+id/loading"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
 
+        />
 
 </FrameLayout>

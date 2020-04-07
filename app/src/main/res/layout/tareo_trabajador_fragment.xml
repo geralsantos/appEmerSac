@@ -21,25 +21,72 @@
             android:layout_margin="5dp"
             >
 
-            <TextView
-                android:id="@+id/textoformatohoras"
-                android:layout_width="wrap_content"
+            <Spinner
+                android:id="@+id/spinner_tareo_trabajador_listado_proyectos"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Formato de 24 horas"
-                android:textSize="20dp"
-                app:fontFamily="@font/ubuntu"
+                app:fontFamily="@font/latoregular"
+                android:layout_marginTop="5dp"
+                style="@style/Widget.AppCompat.Spinner.Underlined"
 
                 />
+            <Spinner
+                android:id="@+id/spinner_tareo_trabajador_listado_solid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:fontFamily="@font/latoregular"
+                android:layout_marginTop="20dp"
+                style="@style/Widget.AppCompat.Spinner.Underlined"
+                android:layout_below="@+id/spinner_tareo_trabajador_listado_proyectos"
+
+                />
+            <!--TextView
+                android:id="@+id/id_titulo_listado_actividad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Seleccione una actividad"
+                android:textSize="20dp"
+                android:layout_marginTop="20dp"
+                app:fontFamily="@font/latoregular"
+                android:layout_below="@+id/spinner_tareo_trabajador_listado_proyectos"
+                /-->
+
+            <Spinner
+                android:id="@+id/spinner_tareo_trabajador_listado_actividades"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/spinner_tareo_trabajador_listado_solid"
+                android:layout_marginTop="20dp"
+                app:fontFamily="@font/latoregular"
+                style="@style/Widget.AppCompat.Spinner.Underlined"
+                />
+            <Button
+                android:id="@+id/btn_abrir_dialog_seleccione_trabajador"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/spinner_tareo_trabajador_listado_actividades"
+                android:layout_marginTop="25dp"
+                android:background="#f6f6f6"
+                android:gravity="left|center_vertical"
+                android:text="Seleccione Trabajador"
+                android:textColor="#0050B2"
+                app:fontFamily="@font/latoregular"
+                android:paddingLeft="10dp"
+                />
+
+
 
             <TextView
                 android:id="@+id/id_horainicio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hora Inicio"
-                android:textSize="20dp"
-                android:layout_marginTop="20dp"
-                app:fontFamily="@font/ubuntu"
-                android:layout_below="@+id/textoformatohoras"
+                android:text="HORA INICIO (formato 24:00)"
+                android:textSize="14dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginLeft="7dp"
+                app:fontFamily="@font/latoregular"
+                android:textColor="#0050B2"
+                android:layout_below="@id/btn_abrir_dialog_seleccione_trabajador"
 
                 />
 
@@ -51,6 +98,8 @@
                 android:layout_below="@+id/id_horainicio"
                 android:maxLength="2"
                 android:textAlignment="center"
+                android:layout_marginLeft="7dp"
+                app:fontFamily="@font/latoregular"
                 />
 
             <TextView
@@ -60,7 +109,7 @@
                 android:text=":"
                 android:textSize="20dp"
                 android:layout_marginTop="13dp"
-                app:fontFamily="@font/ubuntu"
+                app:fontFamily="@font/latoregular"
                 android:layout_below="@+id/id_horainicio"
                 android:layout_toRightOf="@+id/edittext_horainicio"
 
@@ -76,7 +125,7 @@
                 android:layout_below="@+id/id_horainicio"
                 android:layout_toRightOf="@+id/edittext_horainicio"
                 android:textAlignment="center"
-
+                app:fontFamily="@font/latoregular"
 
                 />
 
@@ -84,13 +133,13 @@
                 android:id="@+id/id_horafin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hora Fin"
-                android:textSize="20dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="42dp"
-                app:fontFamily="@font/ubuntu"
-                android:layout_below="@+id/textoformatohoras"
-                android:layout_toRightOf="@+id/id_horainicio"
+                android:text="HORA FIN (formato 24:00)"
+                android:textSize="14dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginLeft="5dp"
+                app:fontFamily="@font/latoregular"
+                android:textColor="#0050B2"
+                android:layout_below="@+id/edittext_mininicio"
 
                 />
             <EditText
@@ -99,11 +148,10 @@
                 android:layout_height="wrap_content"
                 android:inputType="numberPassword"
                 android:maxLength="2"
-                android:layout_below="@+id/id_horainicio"
-                android:layout_toRightOf="@+id/edittext_mininicio"
-                android:layout_marginLeft="50dp"
+                android:layout_below="@+id/id_horafin"
+                android:layout_marginLeft="5dp"
                 android:textAlignment="center"
-
+                app:fontFamily="@font/latoregular"
                 />
 
             <TextView
@@ -113,8 +161,8 @@
                 android:text=":"
                 android:textSize="20dp"
                 android:layout_marginTop="13dp"
-                app:fontFamily="@font/ubuntu"
-                android:layout_below="@+id/id_horainicio"
+                app:fontFamily="@font/latoregular"
+                android:layout_below="@+id/id_horafin"
                 android:layout_toRightOf="@+id/edittext_horafin"
                 android:textAlignment="center"
 
@@ -125,10 +173,10 @@
                 android:layout_height="wrap_content"
                 android:inputType="numberPassword"
                 android:maxLength="2"
-                android:layout_below="@+id/id_horainicio"
+                android:layout_below="@+id/id_horafin"
                 android:layout_toRightOf="@+id/edittext_horafin"
                 android:textAlignment="center"
-
+                app:fontFamily="@font/latoregular"
                 />
 
             <!--TextView
@@ -142,52 +190,18 @@
                 android:layout_below="@+id/edittext_minfin"
 
                 /-->
-
-            <Spinner
-                android:id="@+id/spinner_tareo_trabajador_listado_proyectos"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/edittext_minfin"
-                android:layout_marginTop="35dp"
-                app:fontFamily="@font/ubuntu"
-                android:elevation="5dp"
-                android:background="#121212e0"
-                android:padding="15dp"
-                />
-
             <!--TextView
-                android:id="@+id/id_titulo_listado_actividad"
-                android:layout_width="match_parent"
+                android:id="@+id/textoformatohoras"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Seleccione una actividad"
-                android:textSize="20dp"
-                android:layout_marginTop="20dp"
-                app:fontFamily="@font/ubuntu"
-                android:layout_below="@+id/spinner_tareo_trabajador_listado_proyectos"
+                android:text="Formato de 24 horas"
+                android:textSize="15dp"
+                android:textColor="#0050B2"
+                app:fontFamily="@font/latoregular"
+                android:layout_below="@+id/edittext_minfin"
+                android:layout_marginLeft="7dp"
                 /-->
 
-            <Spinner
-                android:id="@+id/spinner_tareo_trabajador_listado_actividades"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/spinner_tareo_trabajador_listado_proyectos"
-                android:layout_marginTop="30dp"
-                app:fontFamily="@font/ubuntu"
-                android:background="#121212e0"
-                android:padding="15dp"
-                />
-
-            <Button
-                android:id="@+id/btn_abrir_dialog_seleccione_trabajador"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/spinner_tareo_trabajador_listado_actividades"
-                android:layout_marginTop="140dp"
-                android:background="#E7133C"
-                android:text="Seleccione Trabajador"
-                android:textColor="#fff"
-
-                />
             <!--Button
                 android:id="@+id/btn_ver_actividades_registradas"
                 android:layout_width="match_parent"
@@ -206,11 +220,25 @@
                 android:layout_height="wrap_content"
                 android:text="Guardar"
                 android:layout_marginTop="20dp"
-                android:layout_below="@id/btn_abrir_dialog_seleccione_trabajador"
-                android:background="#2196F3"
+                android:layout_below="@id/edittext_minfin"
+                android:background="@drawable/btn_rounded"
+                android:layout_marginLeft="150dp"
+                android:layout_centerInParent="true"
                 android:textColor="#fff"
+                app:fontFamily="@font/latoregular"
                 />
+
 
         </RelativeLayout>
     </ScrollView>
+    <ProgressBar
+        android:id="@+id/loading"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+
+        />
 </RelativeLayout>

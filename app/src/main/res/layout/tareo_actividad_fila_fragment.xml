@@ -3,11 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     >
 
     <TextView
-        android:id="@+id/proyecto"
+        android:id="@+id/value_proyecto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="18dp"
@@ -20,74 +19,71 @@
 
     <TextView
         android:id="@+id/texto_horainicio"
-        android:layout_width="75dp"
+        android:layout_width="105dp"
         android:layout_height="20dp"
-        android:layout_below="@+id/proyecto"
-        android:text="  ESTADO: "
+        android:layout_below="@+id/value_proyecto"
+        android:text="  HORA INICIO: "
         android:layout_marginTop="10dp"
         app:fontFamily="@font/latoregular"
         />
 
     <TextView
-        android:id="@+id/estado"
-        android:layout_width="150dp"
+        android:id="@+id/value_horainicio"
+        android:layout_width="100dp"
         android:layout_height="20dp"
-        android:layout_below="@+id/proyecto"
+        android:layout_below="@+id/value_proyecto"
         android:layout_toRightOf="@+id/texto_horainicio"
-        android:text="ESTADO"
+        android:text="10:00"
         android:layout_marginTop="10dp"
         app:fontFamily="@font/latoregular"
         android:textStyle="bold"
         />
+    <TextView
+        android:id="@+id/texto_solidnombre"
+        android:layout_width="120dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/value_horainicio"
+        android:text="  NOMBRE SOLID: "
+        android:layout_marginTop="10dp"
+        app:fontFamily="@font/latoregular"
+        />
 
     <TextView
-        android:id="@+id/texto_horafin"
-        android:layout_width="50dp"
+        android:id="@+id/value_solidnombre"
+        android:layout_width="200dp"
         android:layout_height="20dp"
-        android:layout_below="@+id/texto_horainicio"
-        android:text="HITO:"
+        android:layout_below="@+id/value_horainicio"
+        android:layout_toRightOf="@+id/texto_solidnombre"
+        android:text="SOLIDNOMBRE"
+        android:layout_marginTop="10dp"
+        app:fontFamily="@font/latoregular"
+        android:textStyle="bold"
+        />
+    <TextView
+        android:id="@+id/texto_tareanombre"
+        android:layout_width="120dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/texto_solidnombre"
+        android:text="NOMBRE TAREA:"
         android:layout_marginLeft="7dp"
         android:layout_marginTop="10dp"
         app:fontFamily="@font/latoregular"
         />
 
     <TextView
-        android:id="@+id/avance"
-        android:layout_width="300dp"
+        android:id="@+id/value_tareanombre"
+        android:layout_width="200dp"
         android:layout_height="20dp"
-        android:layout_below="@+id/estado"
-        android:layout_toRightOf="@+id/texto_horafin"
-        android:text="NOMBREHITO"
+        android:layout_below="@+id/value_solidnombre"
+        android:layout_toRightOf="@+id/texto_tareanombre"
+        android:text="TAREANOMBRE"
         android:layout_marginTop="10dp"
 
         app:fontFamily="@font/latoregular"
         android:textStyle="bold"
         />
-    <TextView
-    android:id="@+id/texto_numeroadjuntos"
-    android:layout_width="85dp"
-    android:layout_height="20dp"
-    android:layout_below="@+id/texto_horafin"
-    android:text="ADJUNTOS:"
-    android:layout_marginLeft="7dp"
-    android:layout_marginTop="10dp"
-    app:fontFamily="@font/latoregular"
-    />
-
-    <TextView
-        android:id="@+id/numeroadjuntos"
-        android:layout_width="50dp"
-        android:layout_height="20dp"
-        android:layout_below="@+id/avance"
-        android:text="10"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="30dp"
-        android:layout_toRightOf="@+id/texto_numeroadjuntos"
 
 
-        app:fontFamily="@font/latoregular"
-        android:textStyle="bold"
-        />
 
 
 </RelativeLayout>

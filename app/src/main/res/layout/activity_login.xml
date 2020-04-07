@@ -36,7 +36,6 @@
                 android:layout_gravity="start"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="64dp"
-                android:background="#2196F3"
                 android:enabled="false"
                 android:text="@string/action_sign_in"
                 android:textColor="#fff"
@@ -45,7 +44,10 @@
                 app:layout_constraintHorizontal_bias="0.529"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/password"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintVertical_bias="0.0"
+                app:fontFamily="@font/latoregular"
+                android:background="@drawable/btn_rounded"
+                />
 
             <EditText
                 android:id="@+id/username"
@@ -60,7 +62,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.562"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:textSize="13sp"/>
 
             <EditText
                 android:id="@+id/password"
@@ -77,7 +80,9 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.562"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/username" />
+                app:layout_constraintTop_toBottomOf="@+id/username"
+                android:textSize="13sp"
+                />
 
             <ProgressBar
                 android:id="@+id/loading"

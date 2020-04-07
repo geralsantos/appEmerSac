@@ -6,10 +6,17 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.media.ExifInterface;
+import android.util.Log;
 
+import com.example.myapplication.Config.Config;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
+import com.example.myapplication.config;
 public class ImageUtils {
 
     public static ImageUtils mInstant;
@@ -22,15 +29,15 @@ public class ImageUtils {
     }
 
     public Bitmap getCompressedBitmap(String imagePath) {
-        float maxHeight = 1920.0f;
-        float maxWidth = 1080.0f;
+        float maxHeight = 2220.0f;
+        float maxWidth = 1380.0f;
         Bitmap scaledBitmap = null;
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         Bitmap bmp = BitmapFactory.decodeFile(imagePath, options);
 
-        int actualHeight = options.outHeight;
-        int actualWidth = options.outWidth;
+        int actualHeight = 382;//options.outHeight;
+        int actualWidth = 382;//options.outWidth;
         float imgRatio = (float) actualWidth / (float) actualHeight;
         float maxRatio = maxWidth / maxHeight;
 
@@ -97,13 +104,33 @@ public class ImageUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 85, out);
 
+        /*config conf = new config();
+        String root = conf.getRutaArchivos();
+        File myDir,file;
+        String fname="";
+        myDir = new File(root + "Fotos/");
+        myDir.mkdirs();
+        Calendar c = Calendar.getInstance(); SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+        String strDate = sdf.format(c.getTime());
+        fname = "Image_"+strDate+".jpeg";
+        file = new File (myDir, fname);
+        ByteArrayOutputStream out = null;
+        try {
+            FileOutputStream outo = new FileOutputStream(file);
+            out = new ByteArrayOutputStream();
+            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outo);
+            outo.flush();
+            outo.close();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }*/
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
         byte[] byteArray = out.toByteArray();
 
         Bitmap updatedBitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-
+    Log.d("updatedBitmap",updatedBitmap.getHeight()+"-"+updatedBitmap.getWidth());
         return updatedBitmap;
     }
 
@@ -123,6 +150,7 @@ public class ImageUtils {
         while (totalPixels / (inSampleSize * inSampleSize) > totalReqPixelsCap) {
             inSampleSize++;
         }
+        Log.d("calculateInSampleSize",inSampleSize+"");
         return inSampleSize;
     }
 }

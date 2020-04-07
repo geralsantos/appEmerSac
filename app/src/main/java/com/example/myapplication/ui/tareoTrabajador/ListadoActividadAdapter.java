@@ -28,13 +28,10 @@ public class ListadoActividadAdapter extends BaseAdapter {
 
 
     static class ViewHolder extends RecyclerView.ViewHolder{
-        TextView textViewtrabajador;
-        TextView textViewhorainicio;
-        TextView textViewhorafin;
-        TextView textViewhoradiurna;
-        TextView textViewrendDiurno;
-        TextView textViewhorasNocturnas;
-        TextView textViewhorasrendNocturno;
+        TextView textViewProyecto;
+        TextView textViewEstado;
+        TextView textViewAvance;
+        TextView textViewAdjuntos;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -71,31 +68,25 @@ public class ListadoActividadAdapter extends BaseAdapter {
         String ruta_imagen = "";
         if (convertView == null){
             convertView = mInflater.inflate(R.layout.tareo_trabajador_fila_actividad_fragment, null);
-            viewHolder = new ListadoActividadAdapter.ViewHolder(convertView);
-
-            viewHolder.textViewtrabajador = (TextView)convertView.findViewById(R.id.trabajador);
-            viewHolder.textViewhorainicio = (TextView)convertView.findViewById(R.id.horainicio);
-            viewHolder.textViewhorafin = (TextView)convertView.findViewById(R.id.horafin);
-            viewHolder.textViewhoradiurna = (TextView)convertView.findViewById(R.id.horadiurna);
-            viewHolder.textViewrendDiurno = (TextView)convertView.findViewById(R.id.rendDiurno);
-            viewHolder.textViewhorasNocturnas = (TextView)convertView.findViewById(R.id.horasNocturnas);
-            viewHolder.textViewhorasrendNocturno = (TextView)convertView.findViewById(R.id.rendNocturno);
-
-            clsActividad row_pos = rowItems.get(position);
-            viewHolder.textViewtrabajador.setText(row_pos.getNombreTrabajador());
-            viewHolder.textViewhorainicio.setText(row_pos.getHorainicio());
-            viewHolder.textViewhorafin.setText(row_pos.getHorafin());
-            viewHolder.textViewhoradiurna.setText(row_pos.getHorasdiurnas());
-            viewHolder.textViewrendDiurno.setText(row_pos.getRenddiurno());
-            viewHolder.textViewhorasNocturnas.setText(row_pos.getHorasnocturas());
-            viewHolder.textViewhorasrendNocturno.setText(row_pos.getRendnocturno());
-
-            convertView.setTag(viewHolder);
-
         }else{
             viewHolder = (ListadoActividadAdapter.ViewHolder)convertView.getTag();
         }
+        viewHolder = new ListadoActividadAdapter.ViewHolder(convertView);
 
+        viewHolder.textViewProyecto = (TextView)convertView.findViewById(R.id.proyecto);
+        viewHolder.textViewEstado = (TextView)convertView.findViewById(R.id.estado);
+
+        viewHolder.textViewAvance = (TextView)convertView.findViewById(R.id.avance);
+        viewHolder.textViewAdjuntos = (TextView)convertView.findViewById(R.id.numeroadjuntos);
+
+        clsActividad row_pos = rowItems.get(position);
+        viewHolder.textViewProyecto.setText(row_pos.getNombre_proyecto());
+        viewHolder.textViewEstado.setText(row_pos.getEstado_proyecto());
+        viewHolder.textViewAvance.setText(row_pos.getHito());
+        viewHolder.textViewAdjuntos.setText(row_pos.getCantidad_adjuntos()+"");
+
+
+        convertView.setTag(viewHolder);
         return convertView;
     }
 }

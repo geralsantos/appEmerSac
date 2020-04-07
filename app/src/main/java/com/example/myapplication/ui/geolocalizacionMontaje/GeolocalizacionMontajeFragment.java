@@ -17,7 +17,9 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Address;
+import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
@@ -33,6 +35,8 @@ import androidx.fragment.app.Fragment;
 
 import android.os.Environment;
 import android.os.FileUtils;
+import android.os.Handler;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.Editable;
@@ -44,11 +48,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -57,13 +63,16 @@ import android.widget.Toast;
 import com.example.myapplication.Config.Config;
 import com.example.myapplication.InputFilterMinMax;
 import com.example.myapplication.Interface.ApiService;
+import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.data.model.clsMontCronograma;
 import com.example.myapplication.data.model.clsEstadoProyecto;
 import com.example.myapplication.data.model.clsIncidencia;
 import com.example.myapplication.data.model.clsProyecto;
 import com.example.myapplication.data.model.clsSuperVisionAdjuntos;
 import com.example.myapplication.data.model.clsSupervision;
 import com.example.myapplication.data.model.clsTarea;
+import com.example.myapplication.ui.actividades_registradas.ActividadesRegistradasFragment;
 import com.example.myapplication.ui.audio_recorder.AudioRecorderFragment;
 import com.example.myapplication.ui.gallery.GalleryFragment;
 
@@ -77,6 +86,7 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -130,9 +140,10 @@ public class GeolocalizacionMontajeFragment extends Fragment {
     static Intent intentData;
     Bitmap imageBitmap;
 
-    Spinner spnPorcentajeAvance;
     Spinner spinner_geo_montaje_listado_proyectos;
     Spinner spinner_geo_montaje_listado_estados_proyecto;
+    Spinner spinner_geo_montaje_listado_cronog;
+
     //Spinner spinner_geo_montaje_listado_incidencia_proyecto;
     EditText edittext_geo_montaje_descripcion;
     SeekBar seekBar_porcentaje_avance;
@@ -146,6 +157,11 @@ public class GeolocalizacionMontajeFragment extends Fragment {
     String[] proyectos_array = null;
     Integer[] id_proyectos_array = null;
 
+    List<clsMontCronograma> rowCronograma=null;
+    List<String> spnArrCronograma = null;
+    String[] cronograma_array = null;
+    Integer[] id_cronograma_array = null;
+
     List<clsEstadoProyecto> rowEstadosProyecto=null;
     String[] estados_proyectos_array = null;
     Integer[] id_estado_proyectos_array = null;
@@ -154,6 +170,7 @@ public class GeolocalizacionMontajeFragment extends Fragment {
     String[] incidencias = null;
     Integer[] incidencias_id = null;
     Integer[] newincidencias_id = null;
+    Integer proyecto_id = null;
 
     boolean[] incidenciasSelected = null;
     LocationManager locationManager;
@@ -166,11 +183,16 @@ public class GeolocalizacionMontajeFragment extends Fragment {
     boolean isAudioSaving=false;
     TextView nombreusuario;
     SharedPreferences sharedPreferences = null;
-
+    Button btn_ver_actividades_registradas;
+    Integer usuario_id=null;
+    ProgressBar loadingProgressBar=null;
+    LocationListener listener;
+    Handler handler = new Handler(); // declared before onCreate
+    Runnable myRunnable = null;
     public void openDialog(){
         // setup the alert builder
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Seleccione a los trabajadores");
+        builder.setTitle("Seleccione las incidencias");
 // add a checkbox list
 
         builder.setMultiChoiceItems(incidencias, incidenciasSelected, new DialogInterface.OnMultiChoiceClickListener() {
@@ -198,11 +220,11 @@ public class GeolocalizacionMontajeFragment extends Fragment {
         dialogSelPer.show(getFragmentManager(),"example dialog");*/
     }
     public void guardar(){
-        verifyGPSON();
+
 
         Boolean[] arr = {spinner_geo_montaje_listado_proyectos.getSelectedItemPosition()==0,
                 spinner_geo_montaje_listado_estados_proyecto.getSelectedItemPosition()==0,
-                edittext_geo_montaje_descripcion.getText().toString().matches(""),longitude=="",latitude=="",isVideoSaving,isFotoSaving};
+                edittext_geo_montaje_descripcion.getText().toString().matches(""),(longitude==""||latitude==""),isVideoSaving,isFotoSaving};
         String[] arrmsj = {"Seleccione un proyecto","Seleccione un estado del proyecto",
                 "Ingrese una descripción","Habilite el gps y vuelva a entrar a la aplicación",
                 "El video se está guardando, por favor espere...","La foto se está guardando, por favor espere..."};
@@ -226,14 +248,17 @@ public class GeolocalizacionMontajeFragment extends Fragment {
         }
         newincidencias_id = values.toArray(new Integer[values.size()]);
 
-        Integer proyecto_id = id_proyectos_array[useLoop(proyectos_array,spinner_geo_montaje_listado_proyectos.getSelectedItem().toString())];
+        proyecto_id = id_proyectos_array[useLoop(proyectos_array,spinner_geo_montaje_listado_proyectos.getSelectedItem().toString())];
         Integer estado_proyecto_id = id_estado_proyectos_array[useLoop(estados_proyectos_array,spinner_geo_montaje_listado_estados_proyecto.getSelectedItem().toString())];
         String descripcion = edittext_geo_montaje_descripcion.getText().toString();
-        Integer porcentaje = spnPorcentajeAvance.getSelectedItemPosition()+1;
+        Integer montaje_cronograma_id = id_cronograma_array[useLoop(cronograma_array,spinner_geo_montaje_listado_cronog.getSelectedItem().toString())];
 
-        String root = conf.getRutaArchivos();
+        Log.d("estado_proyecto_id",estado_proyecto_id+"");
+        Log.d("listado_estados_",spinner_geo_montaje_listado_estados_proyecto.getSelectedItem().toString());
+
+        String root = conf.getRutaArchivos()+proyecto_id+"/";
         String carpeta="";
-        carpeta = root + "Fotos/";
+        carpeta = root +"Fotos/";
         File myDir = new File(carpeta);
         final File[] filesFotos= myDir.listFiles();
 
@@ -247,9 +272,12 @@ public class GeolocalizacionMontajeFragment extends Fragment {
         ArrayList<String> filePaths = new ArrayList<>();
         final List<MultipartBody.Part> parts = new ArrayList<>();
 
-
+        long fileSizeInBytes=0;
  if (filesFotos !=null){
                         for (File f : filesFotos){
+                            fileSizeInBytes+= f.length();
+
+
                             //archivo = pruebaFilebase64(f);
                            // nombre_adjunto = f.getName();
                             //superVisionSubirArchivos(nombre_adjunto,response.body().getId(),1,archivo);
@@ -258,6 +286,7 @@ public class GeolocalizacionMontajeFragment extends Fragment {
                     }if (filesVideos !=null) {
 
                         for (File f : filesVideos) {
+                            fileSizeInBytes+= f.length();
                             //archivo = pruebaFilebase64(f);
                             //nombre_adjunto = f.getName();
                             //superVisionSubirArchivos(nombre_adjunto,response.body().getId(),1,archivo);
@@ -267,6 +296,7 @@ public class GeolocalizacionMontajeFragment extends Fragment {
                     }if (filesAudios !=null){
 
                         for (File f : filesAudios){
+                            fileSizeInBytes+= f.length();
                             //archivo = pruebaFilebase64(f);
                             //nombre_adjunto = f.getName();
                             //superVisionSubirArchivos(nombre_adjunto,response.body().getId(),1,archivo);
@@ -274,40 +304,22 @@ public class GeolocalizacionMontajeFragment extends Fragment {
 
                         }
                     }
-
-
-     /*   MultipartBody.Builder builder = new MultipartBody.Builder();
-        builder.setType(MultipartBody.FORM);
-
-        builder.addFormDataPart("proyecto_id", String.valueOf(proyecto_id));
-        builder.addFormDataPart("geolocalizacion_estado_id", String.valueOf(estado_proyecto_id));
-        builder.addFormDataPart("descripcion", descripcion);
-        builder.addFormDataPart("porcentaje", String.valueOf(porcentaje));
-        builder.addFormDataPart("latitud", latitude);
-        builder.addFormDataPart("logitud", longitude);
-        builder.addFormDataPart("usuario_id", "1");
-        for (int i = 0; i < newincidencias_id.length; i++) {
-            builder.addFormDataPart("incidencias[]", String.valueOf(newincidencias_id[i]));
-        }
-        // Map is used to multipart the file using okhttp3.RequestBody
-        // Multiple Images
-        for (int i = 0; i < filePaths.size(); i++) {
-            File file = new File(filePaths.get(i));
-            builder.addFormDataPart("adjuntos[]", file.getName(), RequestBody.create(MediaType.parse("multipart/form-file"), file));
+        if (fileSizeInBytes/1024 > 19990) {
+            Toast.makeText(getActivity(), "Ha sobrepasado el límite de tamaño permitido: 20MB. Tus archivos pesan:"+fileSizeInBytes/1024/1024+"Mb, favor de borrar algunos archivos", Toast.LENGTH_LONG).show();
+            return;
         }
 
-
-        MultipartBody requestBody = builder.build();*/
-        Integer usuario_id= sharedPreferences.getInt("usuario_id",10);
-        Call<clsSupervision> call = servicio.guardarSupervision(proyecto_id,estado_proyecto_id,descripcion,porcentaje,latitude,longitude
+        Call<clsSupervision> call = servicio.guardarSupervision(proyecto_id,estado_proyecto_id,descripcion,montaje_cronograma_id,latitude,longitude
         ,usuario_id,newincidencias_id,parts);
         btn_grabar_geo_map.setText("Procesando...");
         btn_grabar_geo_map.setEnabled(false);
+        loadingProgressBar.setVisibility(View.VISIBLE);
+        componenteEnabled(false);
         call.enqueue(new Callback<clsSupervision>() {
             @Override
             public void onResponse(Call<clsSupervision> call, Response<clsSupervision> response) {
                 if (response.isSuccessful()){
-                    Toast.makeText(getActivity(), "El montaje ha sido registrado con exito. " + response.message(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "El avance ha sido registrado con exito. " + response.message(), Toast.LENGTH_LONG).show();
                     if (filesFotos !=null){
                         for (File f : filesFotos){
                             borrarArchivoSubido(f.getAbsolutePath());
@@ -321,52 +333,42 @@ public class GeolocalizacionMontajeFragment extends Fragment {
                             borrarArchivoSubido(f.getAbsolutePath());
                         }
                     }
-                    /*for (int i = 0; i < parts.size(); i++) {
-                        superVisionSubirArchivos(parts.get(i),(response.body().getId()),1);
-                    }*/
-                    //String archivo="";
-                    //String nombre_adjunto = "";
 
-                    /*if (filesFotos !=null){
-                        btn_grabar_geo_map.setText("SUBIENDO FOTOS...");
-                        for (File f : filesFotos){
-                            archivo = pruebaFilebase64(f);
-                            nombre_adjunto = f.getName();
-                            superVisionSubirArchivos(nombre_adjunto,response.body().getId(),1,archivo);
-                        }
-                    }if (filesVideos !=null) {
-                        btn_grabar_geo_map.setText("SUBIENDO VIDEOS...");
-
-                        for (File f : filesVideos) {
-                            archivo = pruebaFilebase64(f);
-                            nombre_adjunto = f.getName();
-                            superVisionSubirArchivos(nombre_adjunto,response.body().getId(),1,archivo);
-                        }
-                    }/*if (filesAudios !=null){
-                        btn_grabar_geo_map.setText("SUBIENDO AUDIOS...");
-
-                        for (File f : filesAudios){
-                            archivo = pruebaFilebase64(f);
-                            nombre_adjunto = f.getName();
-                            superVisionSubirArchivos(nombre_adjunto,response.body().getId(),1,archivo);
-                        }
-                    }*/
 
                 }else{
                     Toast.makeText(getActivity(), "El servidor ha retornado un error. " + response.message(), Toast.LENGTH_LONG).show();
                 }
-                btn_grabar_geo_map.setText("GUARDAR ACTIVIDAD");
-                btn_grabar_geo_map.setEnabled(true);
+                loadingProgressBar.setVisibility(View.GONE);
+                componenteEnabled(true);
                 resetValues();
             }
             @Override
             public void onFailure(Call<clsSupervision> call, Throwable t) {
+                loadingProgressBar.setVisibility(View.GONE);
+                componenteEnabled(true);
                 Toast.makeText(getActivity(), "Ha ocurrido un error. " + t.getMessage(), Toast.LENGTH_LONG).show();
                 btn_grabar_geo_map.setText("GUARDAR ACTIVIDAD");
                 btn_grabar_geo_map.setEnabled(true);
             }
         });
     }
+    private void componenteEnabled(Boolean estado){
+        btn_grabar_geo_map.setEnabled(estado);
+        spinner_geo_montaje_listado_proyectos.setEnabled(estado);
+        spinner_geo_montaje_listado_estados_proyecto.setEnabled(estado);
+        spinner_geo_montaje_listado_cronog.setEnabled(estado);
+        btn_abrir_dialog_seleccione_incidencias.setEnabled(estado);
+        edittext_geo_montaje_descripcion.setEnabled(estado);
+        btn_geo_montaje_camara.setEnabled(estado);
+        btn_geo_montaje_video.setEnabled(estado);
+        btn_geo_montaje_audio.setEnabled(estado);
+        btn_geo_montaje_verfotos.setEnabled(estado);
+        btn_geo_montaje_vervideos.setEnabled(estado);
+        btn_geo_montaje_veraudios.setEnabled(estado);
+        btn_ver_actividades_registradas.setEnabled(estado);
+        btn_grabar_geo_map.setEnabled(estado);
+    }
+
     private void borrarArchivoSubido(String ruta_imagen){
         try {
             File fdelete = new File(ruta_imagen);
@@ -379,73 +381,8 @@ public class GeolocalizacionMontajeFragment extends Fragment {
             e.printStackTrace();
         }
     }
-    /*private String pruebaFilebase64(File file){
-        InputStream inputStream = null;//You can get an inputStream using any IO API
-        ByteArrayOutputStream output=null;
-        try {
-
-            inputStream = new FileInputStream(file.getAbsolutePath());
-            byte[] buffer = new byte[8192];
-            int bytesRead;
-             output = new ByteArrayOutputStream();
-            Base64OutputStream output64 = new Base64OutputStream(output, Base64.DEFAULT);
-            try {
-                while ((bytesRead = inputStream.read(buffer)) != -1) {
-                    output64.write(buffer, 0, bytesRead);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            output64.close();
-
-        }catch (Exception ex){
-            Log.d("ERROR PRUEBA",ex.getMessage());
-        }
-        return output.toString();
 
 
-    }*/
-    private void superVisionSubirArchivos(String nombre_adjunto,Integer supervision_id, Integer usuario_id,String videobuffer){
-       /*Call<clsSuperVisionAdjuntos> call = servicio.pruebaAdjuntoVideo(nombre_adjunto,supervision_id,usuario_id,videobuffer);
-        call.enqueue(new Callback<clsSuperVisionAdjuntos>() {
-            @Override
-            public void onResponse(Call<clsSuperVisionAdjuntos> call, Response<clsSuperVisionAdjuntos> response) {
-                Log.d("onResponse",""+response);
-
-                if (response.isSuccessful()){
-                    Log.d("RESPONSE","ITS OK");
-                }else{
-                    Log.d("onResponse ELSE","else error");
-
-                }
-            }
-            @Override
-            public void onFailure(Call<clsSuperVisionAdjuntos> call, Throwable t) {
-                Log.d("ERROR REPONSE ADJUNTO","FAILED: "+t.getMessage());
-            }
-        });*/
-/*
- Call<clsSuperVisionAdjuntos> call = servicio.guardarSupervisionAdjuntos(supervision_id,usuario_id,parts);
-        call.enqueue(new Callback<clsSuperVisionAdjuntos>() {
-            @Override
-            public void onResponse(Call<clsSuperVisionAdjuntos> call, Response<clsSuperVisionAdjuntos> response) {
-                Log.d("SUCCESS",""+response);
-                Log.e("SUCCESS2",response.body()+"");
-                Log.d("SUCCESS3",(""+(response.body().getId())));
-                Log.d("SUCCESS3",( new Gson().toJson(response.body())));
-                if (response.isSuccessful()){
-                    Log.d("RESPONSE","ITS OK");
-
-                }
-            }
-            @Override
-            public void onFailure(Call<clsSuperVisionAdjuntos> call, Throwable t) {
-                Log.d("ERROR REPONSE ADJUNTO","FAILED: "+t.getMessage());
-            }
-        });
-*/
-
-    }
     private MultipartBody.Part prepareFilePart(String partName, String url){
 
         File file = new File(url);
@@ -481,39 +418,99 @@ public class GeolocalizacionMontajeFragment extends Fragment {
         }
         else
         {
+            locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+            btn_grabar_geo_map.setText("Obteniendo GPS...");
+            btn_grabar_geo_map.setEnabled(false);
+            handler =  new Handler();
+            handler.removeCallbacks(myRunnable);
+            myRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getActivity(), "No se ha podido identificar su gps", Toast.LENGTH_SHORT).show();
+                    locationManager.removeUpdates(listener);
+                    btn_grabar_geo_map.setText("GUARDAR ACTIVIDAD");
+                    btn_grabar_geo_map.setEnabled(true);
+                }
+            };
+            handler.postDelayed(myRunnable,10000);
+            listener = new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    double lat=location.getLatitude();
+                    double longi=location.getLongitude();
+                    handler.removeCallbacks(myRunnable);
+
+                    latitude=lat+"";
+                    longitude=longi+"";
+                    btn_grabar_geo_map.setText("GUARDAR ACTIVIDAD");
+                    btn_grabar_geo_map.setEnabled(true);
+                    guardar();
+                    locationManager.removeUpdates(listener);
+                }
+                @Override
+                public void onStatusChanged(String s, int i, Bundle bundle) {
+                }
+
+                @Override
+                public void onProviderEnabled(String s) {
+                }
+
+                @Override
+                public void onProviderDisabled(String s) {
+                    Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(i);
+                }
+            };
+            locationManager.requestLocationUpdates("gps", 2000, 0, listener);
+
+
             Location LocationGps= locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             Location LocationNetwork=locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             Location LocationPassive=locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
             //latitude="";
             //longitude="";
-            if (LocationGps !=null)
+             if (LocationGps !=null)
             {
                 double lat=LocationGps.getLatitude();
                 double longi=LocationGps.getLongitude();
-
+                handler.removeCallbacks(myRunnable);
                 latitude=lat+"";
                 longitude=longi+"";
+                btn_grabar_geo_map.setText("GUARDAR ACTIVIDAD");
+                btn_grabar_geo_map.setEnabled(true);
+                locationManager.removeUpdates(listener);
+
+                guardar();
             }
             else if (LocationNetwork !=null)
             {
                 double lat=LocationNetwork.getLatitude();
                 double longi=LocationNetwork.getLongitude();
-
+                handler.removeCallbacks(myRunnable);
                 latitude=lat+"";
                 longitude=longi+"";
+                btn_grabar_geo_map.setText("GUARDAR ACTIVIDAD");
+                btn_grabar_geo_map.setEnabled(true);
+                locationManager.removeUpdates(listener);
+
+                guardar();
             }
             else if (LocationPassive !=null)
             {
                 double lat=LocationPassive.getLatitude();
                 double longi=LocationPassive.getLongitude();
-
+                handler.removeCallbacks(myRunnable);
                 latitude=""+lat;
                 longitude=""+longi;
+                btn_grabar_geo_map.setText("GUARDAR ACTIVIDAD");
+                btn_grabar_geo_map.setEnabled(true);
+                locationManager.removeUpdates(listener);
+
+                guardar();
+            }else{
+                 Toast.makeText(getActivity(), "Verifique que su gps funcione correctamente", Toast.LENGTH_SHORT).show();
             }
-            else
-            {
-                Toast.makeText(getActivity(), "Verifique que su gps funcione correctamente", Toast.LENGTH_SHORT).show();
-            }
+
         }
 
     }
@@ -537,17 +534,18 @@ public class GeolocalizacionMontajeFragment extends Fragment {
         alertDialog.show();
     }
     private void llamarIntentAudio() {
+        if (proyecto_id==0){
+            Toast.makeText(getActivity(),"Debe seleccionar un proyecto",Toast.LENGTH_SHORT).show();
+            return;
+        }
         AudioRecorderFragment audioRecorderF = new AudioRecorderFragment();
+        Bundle args = new Bundle();
+        args.putInt("proyecto_id", proyecto_id);
+
+        audioRecorderF.setArguments(args);
         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_layout_geomap, audioRecorderF);
-        /*switch (actionActive){
-            case "android.media.action.IMAGE_CAPTURE":
-                audioRecorderF.mostrarTipoArchivo="mostrarFotos";
-                break;
-            case "android.media.action.VIDEO_CAPTURE":
-                audioRecorderF.mostrarTipoArchivo="mostrarVideos";
-                break;
-        }*/
+        fragmentTransaction.add(R.id.content_frame, audioRecorderF);
+
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
@@ -555,11 +553,18 @@ public class GeolocalizacionMontajeFragment extends Fragment {
     public static GeolocalizacionMontajeFragment newInstance() {
         return new GeolocalizacionMontajeFragment();
     }
+    public void onResume(){
+        super.onResume();
+        // Set title bar
+        ((MainActivity) getActivity())
+                .setActionBarTitle(getString(R.string.menu_geolocalizacion_montaje));
 
+
+    }
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-
+    Log.d("gggg","");
         return inflater.inflate(R.layout.geolocalizacion_montaje_fragment, container, false);
     }
 
@@ -570,14 +575,17 @@ public class GeolocalizacionMontajeFragment extends Fragment {
         // TODO: Use the ViewModel
         verifyStoragePermissions(getActivity());
         requestPermissionGPS(getActivity());
-
+Log.d("wwww","");
         this.listadoProyectos();
         this.listadoEstadosProyecto();
         this.listadoIncidenciasProyecto();
-        this.listadoPorcentajes();
+        loadingProgressBar = (ProgressBar) getView().findViewById(R.id.loading);
         sharedPreferences = getActivity().getSharedPreferences("datosusuario",getActivity().MODE_PRIVATE);
-        //Log.d();
-        btn_abrir_dialog_seleccione_incidencias = (Button) getActivity().findViewById(R.id.btn_abrir_dialog_seleccione_incidencias);
+        usuario_id = sharedPreferences.getInt("usuario_id",10);
+
+        Log.d("usuario_id",usuario_id+"");
+        spinner_geo_montaje_listado_cronog = (Spinner) getView().findViewById(R.id.spinner_geo_montaje_listado_cronog);
+        btn_abrir_dialog_seleccione_incidencias = (Button) getView().findViewById(R.id.btn_abrir_dialog_seleccione_incidencias);
         btn_abrir_dialog_seleccione_incidencias.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -585,11 +593,11 @@ public class GeolocalizacionMontajeFragment extends Fragment {
                 openDialog();
             }
         });
-        id_img = (ImageView) getActivity().findViewById(R.id.id_img);
-        edittext_geo_montaje_descripcion = (EditText) getActivity().findViewById(R.id.edittext_geo_montaje_descripcion);
+        id_img = (ImageView) getView().findViewById(R.id.id_img);
+        edittext_geo_montaje_descripcion = (EditText) getView().findViewById(R.id.edittext_geo_montaje_descripcion);
 
-        btn_geo_montaje_camara = (ImageButton) getActivity().findViewById(R.id.btn_geo_montaje_camara);
-        btn_geo_montaje_verfotos=(Button) getActivity().findViewById(R.id.btn_geo_montaje_verfotos);
+        btn_geo_montaje_camara = (ImageButton) getView().findViewById(R.id.btn_geo_montaje_camara);
+        btn_geo_montaje_verfotos=(Button) getView().findViewById(R.id.btn_geo_montaje_verfotos);
         btn_geo_montaje_camara.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -607,8 +615,8 @@ public class GeolocalizacionMontajeFragment extends Fragment {
                 }
             }
         });
-        btn_geo_montaje_video = (ImageButton) getActivity().findViewById(R.id.btn_geo_montaje_video);
-        btn_geo_montaje_vervideos = (Button) getActivity().findViewById(R.id.btn_geo_montaje_vervideos);
+        btn_geo_montaje_video = (ImageButton) getView().findViewById(R.id.btn_geo_montaje_video);
+        btn_geo_montaje_vervideos = (Button) getView().findViewById(R.id.btn_geo_montaje_vervideos);
         btn_geo_montaje_video.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -626,8 +634,8 @@ public class GeolocalizacionMontajeFragment extends Fragment {
                 }
             }
         });
-        btn_geo_montaje_audio = (ImageButton) getActivity().findViewById(R.id.btn_geo_montaje_audio);
-        btn_geo_montaje_veraudios= (Button) getActivity().findViewById(R.id.btn_geo_montaje_veraudios);
+        btn_geo_montaje_audio = (ImageButton) getView().findViewById(R.id.btn_geo_montaje_audio);
+        btn_geo_montaje_veraudios= (Button) getView().findViewById(R.id.btn_geo_montaje_veraudios);
         btn_geo_montaje_audio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -647,17 +655,66 @@ public class GeolocalizacionMontajeFragment extends Fragment {
             }
         });
 
-        btn_grabar_geo_map = (Button) getActivity().findViewById(R.id.btn_grabar_geo_map);
+        btn_grabar_geo_map = (Button) getView().findViewById(R.id.btn_grabar_geo_map);
         btn_grabar_geo_map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                guardar();
+                verifyGPSON();
+            }
+        });
+        btn_ver_actividades_registradas = (Button) getView().findViewById(R.id.btn_ver_actividades_registradas);
+        btn_ver_actividades_registradas.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                llamarIntentActividadesRegistradas();
+            }
+        });
+        spinner_geo_montaje_listado_proyectos = (Spinner) getView().findViewById(R.id.spinner_geo_montaje_listado_proyectos);
+        spinner_geo_montaje_listado_proyectos.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                try {
+                    if (position>0){
+                        proyecto_id = id_proyectos_array[useLoop(proyectos_array,spinner_geo_montaje_listado_proyectos.getSelectedItem().toString())];
+                        Log.d("proyecto_id",proyecto_id+"");
+
+                        listadoHitos(proyecto_id);
+                    }else{
+                        proyecto_id = 0;
+                        spnArrCronograma =  new ArrayList<String>();
+                        spnArrCronograma.add("DEBE SELECCIONAR UN PROYECTO");
+                        ArrayAdapter<String> adapter = new ArrayAdapter<String>( getActivity(), R.layout.spinner_text_color, spnArrCronograma);
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        spinner_geo_montaje_listado_cronog.setEnabled(false);
+                        spinner_geo_montaje_listado_cronog.setAdapter(adapter);
+                    }
+                }catch (Exception ex){
+                    Log.d("ERRORSELEC",ex.getMessage());
+                    Toast.makeText(getActivity(),"itemselected error",Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
 
 
-
     }
+    public void llamarIntentActividadesRegistradas(){
+        ActividadesRegistradasFragment actividadesRegF = new ActividadesRegistradasFragment();
+        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.content_frame, actividadesRegF);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+        Log.i("q", "llamarIntentActividadesRegistradas");
+
+        /*FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.content_frame, actividadesRegF);
+        fragmentTransaction.commit();*/
+    }
+
     public void requestPermissionGPS(Activity activity){
         if (ActivityCompat.checkSelfPermission(activity,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(activity,Manifest.permission.ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
@@ -673,18 +730,18 @@ public class GeolocalizacionMontajeFragment extends Fragment {
                 break;
         }
 
-    }
+    }/*
     public void listadoPorcentajes(){
         List<Integer> spinnerArray =  new ArrayList<Integer>();
         for (int i = 1; i <= 100; i++) {
             spinnerArray.add(i);
         }
-        ArrayAdapter<Integer> adapter = new ArrayAdapter<Integer>( getActivity(), android.R.layout.simple_spinner_item, spinnerArray);
-        spnPorcentajeAvance = (Spinner) getActivity().findViewById(R.id.spnPorcentajeAvance);
+        ArrayAdapter<Integer> adapter = new ArrayAdapter<Integer>( getActivity(), R.layout.spinner_geomap_porcentaje, spinnerArray);
+        spnPorcentajeAvance = (Spinner) getView().findViewById(R.id.spnPorcentajeAvance);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spnPorcentajeAvance.setAdapter(adapter);
-    }
+    }*/
     public void listadoEstadosProyecto(){
         Call<List<clsEstadoProyecto>> proyectos = servicio.getEstadosProyecto();
         proyectos.enqueue(new Callback<List<clsEstadoProyecto>>() {
@@ -695,16 +752,16 @@ public class GeolocalizacionMontajeFragment extends Fragment {
                       estados_proyectos_array = new String[response.body().size()];
                       id_estado_proyectos_array = new Integer[response.body().size()];
                       rowEstadosProyecto = new ArrayList<clsEstadoProyecto>();
-                      spinnerArray.add("SELECCIONE");
+                      spinnerArray.add("SELECCIONE UN ESTADO");
                       Integer i = 0;
                       for (clsEstadoProyecto p : response.body()) {
                           spinnerArray.add(p.getNombre());
-                          estados_proyectos_array[i] = (i+1)+". "+p.getNombre();
+                          estados_proyectos_array[i] = p.getNombre();
                           id_estado_proyectos_array[i] = p.getId();
                           rowEstadosProyecto.add(p);
                           i++;
                       }
-                      ArrayAdapter<String> adapter = new ArrayAdapter<String>( getActivity(), android.R.layout.simple_spinner_item, spinnerArray);
+                      ArrayAdapter<String> adapter = new ArrayAdapter<String>( getActivity(), R.layout.spinner_text_color, spinnerArray);
 
                       adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                       spinner_geo_montaje_listado_estados_proyecto = (Spinner) getView().findViewById(R.id.spinner_geo_montaje_listado_estados_proyecto);
@@ -729,16 +786,17 @@ public class GeolocalizacionMontajeFragment extends Fragment {
                     id_proyectos_array = new Integer[response.body().size()];
                     spnArrProyectos =  new ArrayList<String>();
                     rowProyectos = new ArrayList<clsProyecto>();
-                    spnArrProyectos.add("SELECCIONE");
+                    spnArrProyectos.add("SELECCIONE UN PROYECTO");
                     Integer i = 0;
                     for (clsProyecto p : response.body()) {
-                        spnArrProyectos.add((i+1)+". "+p.getNombre());
-                        proyectos_array[i] = (i+1)+". "+p.getNombre();
+                        spnArrProyectos.add(p.getNombre());
+                        proyectos_array[i] = p.getNombre();
                         id_proyectos_array[i] = p.getId();
+                        Log.d("id_proyectos_array["+i+"]",p.getId()+"");
                         rowProyectos.add(p);
                         i++;
                     }
-                    ArrayAdapter<String> adapter = new ArrayAdapter<String>( getActivity(), android.R.layout.simple_spinner_item, spnArrProyectos);
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>( getActivity(), R.layout.spinner_text_color, spnArrProyectos);
 
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinner_geo_montaje_listado_proyectos = (Spinner) getView().findViewById(R.id.spinner_geo_montaje_listado_proyectos);
@@ -753,9 +811,62 @@ public class GeolocalizacionMontajeFragment extends Fragment {
         });
 
     }
+    public void listadoHitos(Integer proyecto_id){
+        Log.d("listadoHitos",proyecto_id+"");
+
+        spnArrCronograma =  new ArrayList<String>();
+        spnArrCronograma.add("EL PROYECTO NO TIENE HITO");
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>( getActivity(), R.layout.spinner_text_color, spnArrCronograma);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_geo_montaje_listado_cronog.setAdapter(adapter);
+        Log.d("listadoHitos f",proyecto_id+"err");
+
+        Call<List<clsMontCronograma>> hitos = servicio.getCronograma(proyecto_id);
+        hitos.enqueue(new Callback<List<clsMontCronograma>>() {
+            @Override
+            public void onResponse(Call<List<clsMontCronograma>> call, Response<List<clsMontCronograma>> response) {
+                Log.d("MSJ",response+"");
+                if (response.isSuccessful()){
+
+
+                    cronograma_array = new String[response.body().size()];
+                    id_cronograma_array = new Integer[response.body().size()];
+                    spnArrCronograma =  new ArrayList<String>();
+                    rowCronograma = new ArrayList<clsMontCronograma>();
+                    spnArrCronograma.add("SELECCIONE UN HITO");
+                    Integer i = 0;
+                    for (clsMontCronograma p : response.body()) {
+                        spnArrCronograma.add(p.getActividad());
+                        cronograma_array[i] = p.getActividad();
+                        id_cronograma_array[i] = p.getId();
+                        Log.d("id_proyectos_array["+i+"]",p.getId()+"");
+                        rowCronograma.add(p);
+                        i++;
+                    }
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>( getActivity(), R.layout.spinner_text_color, spnArrCronograma);
+
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinner_geo_montaje_listado_cronog = (Spinner) getView().findViewById(R.id.spinner_geo_montaje_listado_cronog);
+                    spinner_geo_montaje_listado_cronog.setAdapter(adapter);
+                    spinner_geo_montaje_listado_cronog.setEnabled(true);
+                }else{
+                    Log.d("ERRORELSE",response+"");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<clsMontCronograma>> call, Throwable t) {
+                Log.d("ERROR",t.getMessage());
+            }
+        });
+
+    }
     public static Integer useLoop(String[] arr, String targetValue) {
         Integer i = 0;
+        Log.d("useLoop targetValue",targetValue);
+
         for(String s: arr){
+            Log.d("useLoop name",s);
             if(s.equals(targetValue))
                 return i;
 
@@ -793,9 +904,18 @@ public class GeolocalizacionMontajeFragment extends Fragment {
 
     }
     public void llamarIntentVerArchivos( ){
+
+        if (proyecto_id==0){
+            Toast.makeText(getActivity(),"Debe seleccionar un proyecto",Toast.LENGTH_SHORT).show();
+            return;
+        }
         GalleryFragment galleryF = new GalleryFragment();
+        Bundle args = new Bundle();
+        args.putInt("proyecto_id", proyecto_id);
+
+        galleryF.setArguments(args);
         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_layout_geomap, galleryF);
+        fragmentTransaction.add(R.id.content_frame, galleryF);
         switch (actionActive) {
             case "android.media.action.IMAGE_CAPTURE":
                 galleryF.mostrarTipoArchivo = "mostrarFotos";
@@ -807,6 +927,7 @@ public class GeolocalizacionMontajeFragment extends Fragment {
                 galleryF.mostrarTipoArchivo = "mostrarAudios";
                 break;
         }
+
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
 
@@ -827,35 +948,36 @@ public class GeolocalizacionMontajeFragment extends Fragment {
         }
     }
     private void saveToInternalStorage(){
-        String root = conf.getRutaArchivos();
+        String root = conf.getRutaArchivos()+proyecto_id+"/";
         File myDir,file;
         String fname="";
         Calendar c = Calendar.getInstance(); SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
         String strDate = sdf.format(c.getTime());
         switch (actionActive){
-            case "android.media.action.IMAGE_CAPTURE":
+          /*  case "android.media.action.IMAGE_CAPTURE":
                 isFotoSaving=true;
 
-                myDir = new File(root + "Fotos/");
+                myDir = new File(root);
                 myDir.mkdirs();
-                fname = "Image_"+strDate+".png";
+                fname = "Image_"+strDate+".jpeg";
                 file = new File (myDir, fname);
                 if (file.exists ()) file.delete ();
                 try {
 
                     FileOutputStream out = new FileOutputStream(file);
-                    imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-                    //ByteArrayOutputStream  out = new ByteArrayOutputStream ();
+
+                    imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
                     out.flush();
                     out.close();
-                    imageBitmap = ImageUtils.getInstant().getCompressedBitmap(myDir+"/"+fname);
+
+                    //imageBitmap = ImageUtils.getInstant().getCompressedBitmap(root+"Fotos/"+fname);
 
                     isFotoSaving=false;
 
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                break;
+                break;*/
             case "android.media.action.VIDEO_CAPTURE":
                 isVideoSaving=true;
 
@@ -892,17 +1014,44 @@ public class GeolocalizacionMontajeFragment extends Fragment {
 
     }
     public void llamarIntentVideo() {
+        if (proyecto_id==0){
+            Toast.makeText(getActivity(),"Debe seleccionar un proyecto",Toast.LENGTH_SHORT).show();
+            return;
+        }
         actionActive = MediaStore.ACTION_VIDEO_CAPTURE;
         Intent takeVideoIntent = new Intent(actionActive);
         if (takeVideoIntent.resolveActivity(getActivity().getPackageManager()) != null) {
             startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
         }
     }
+    private String pictureImagePath = "";
     public void llamarIntentCamara(){
-        actionActive = MediaStore.ACTION_IMAGE_CAPTURE;
-        Intent takePictureIntent = new Intent(actionActive);
-        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        if (proyecto_id==0){
+            Toast.makeText(getActivity(),"Debe seleccionar un proyecto",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+
+        String imageFileName = timeStamp + ".jpeg";
+
+        /*File storageDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES);*/
+        String storageDir = conf.getRutaArchivos()+proyecto_id+"/";
+        pictureImagePath = storageDir + "Fotos/" + imageFileName;
+
+        File file = new File(pictureImagePath);
+
+        Uri outputFileUri = Uri.fromFile(file);
+        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+
+        //actionActive = MediaStore.ACTION_IMAGE_CAPTURE;
+        //Intent takePictureIntent = new Intent(actionActive);
+        if (cameraIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
     @Override
@@ -910,12 +1059,12 @@ public class GeolocalizacionMontajeFragment extends Fragment {
         switch (actionActive){
             case "android.media.action.IMAGE_CAPTURE":
                 if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode!=0 ) {
-                    Bundle extras = data.getExtras();
-                    imageBitmap = (Bitmap) extras.get("data");
+                  /*  Bundle extras = data.getExtras();
+                    imageBitmap = (Bitmap) extras.get("data");*/
                     verifyStoragePermissions(getActivity());
                    /* if (isStoragePermissionGranted()){
                         */intentData = data;
-                        saveToInternalStorage();
+                        //saveToInternalStorage();
                         llamarIntentVerArchivos();/*
                     }*/
                 }
@@ -936,8 +1085,8 @@ public class GeolocalizacionMontajeFragment extends Fragment {
 
     }
     public void verificarCarpetaCreada(){
-        String root = conf.getRutaArchivos();
-        File myDir = new File(root + "Fotos/");
+        String root = conf.getRutaArchivos()+proyecto_id+"/";
+        File myDir = new File(root+"Fotos/");
         myDir.mkdirs();
         File myDir1 = new File(root + "Videos/");
         myDir1.mkdirs();
@@ -964,12 +1113,16 @@ public class GeolocalizacionMontajeFragment extends Fragment {
 
     }
     public void resetValues(){
+        proyecto_id = 0;
+        btn_grabar_geo_map.setText("GUARDAR ACTIVIDAD");
+        btn_grabar_geo_map.setEnabled(true);
         edittext_geo_montaje_descripcion.setText("");
         spinner_geo_montaje_listado_proyectos.setSelection(0);
         spinner_geo_montaje_listado_estados_proyecto.setSelection(0);
+        spinner_geo_montaje_listado_cronog.setSelection(0);
+
         for (int i = 0;i<incidencias.length;i++){
             incidenciasSelected[i] = false;
         }
-        spnPorcentajeAvance.setSelection(0);
     }
 }

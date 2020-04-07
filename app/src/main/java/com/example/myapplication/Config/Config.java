@@ -7,7 +7,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Config {
-    private static final String BASEURL = "http://148.72.23.133:8000/api/";
+    private static final String BASEURL = "http://138.68.49.231/emer/api/";
     private static Retrofit retrofit;
 
     public static Retrofit getRetrofit(){

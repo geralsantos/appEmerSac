@@ -1,87 +1,63 @@
 package com.example.myapplication.data.model;
 
 public class clsActividad {
-    private int id_actividad;
-    private String nombreTrabajador;
-    private String horainicio;
-    private String horafin;
-    private String horasdiurnas;
-    private String renddiurno;
-    private String horasnocturas;
-    private String rendnocturno;
 
-    public clsActividad(int id_actividad, String nombreTrabajador, String horainicio, String horafin, String horasdiurnas, String renddiurno, String horasnocturas, String rendnocturno) {
-        this.id_actividad = id_actividad;
-        this.nombreTrabajador = nombreTrabajador;
-        this.horainicio = horainicio;
-        this.horafin = horafin;
-        this.horasdiurnas = horasdiurnas;
-        this.renddiurno = renddiurno;
-        this.horasnocturas = horasnocturas;
-        this.rendnocturno = rendnocturno;
+
+
+    private int id;
+
+
+    private String nombre_proyecto;
+    private String estado_proyecto;
+    private String hito;
+    private int cantidad_adjuntos;
+
+    public clsActividad(int id, String proyecto_nombre, String geolocalizacion_estado, String supervision_procentaje, int supervision_adjuntos) {
+        this.id = id;
+        this.nombre_proyecto = proyecto_nombre;
+        this.estado_proyecto = geolocalizacion_estado;
+        this.hito = supervision_procentaje;
+        this.cantidad_adjuntos = supervision_adjuntos;
     }
 
-    public int getId_actividad() {
-        return id_actividad;
+
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
+    public String getNombre_proyecto() {
+        return nombre_proyecto;
+    }
+    public String getEstado_proyecto() {
+        return estado_proyecto;
+    }
+    public String getHito() {
+        return hito;
+    }
+    public int getCantidad_adjuntos() {
+        return cantidad_adjuntos;
     }
 
-    public void setId_actividad(int id_actividad) {
-        this.id_actividad = id_actividad;
-    }
+   /* public void setNombre_proyecto(String nombre_proyecto) {
+        this.nombre_proyecto = nombre_proyecto;
+    }*/
 
-    public String getNombreTrabajador() {
-        return nombreTrabajador;
-    }
 
-    public void setNombreTrabajador(String nombreTrabajador) {
-        this.nombreTrabajador = nombreTrabajador;
-    }
+   /* public void setEstado_proyecto(String estado_proyecto) {
+        this.estado_proyecto = estado_proyecto;
+    }*/
 
-    public String getHorainicio() {
-        return horainicio;
-    }
+/*
+    public void setPorcentaje(int porcentaje) {
+        this.porcentaje = porcentaje;
+    }*/
 
-    public void setHorainicio(String horainicio) {
-        this.horainicio = horainicio;
-    }
 
-    public String getHorafin() {
-        return horafin;
-    }
+   /* public void setCantidad_adjuntos(int cantidad_adjuntos) {
+        this.cantidad_adjuntos = cantidad_adjuntos;
+    }*/
 
-    public void setHorafin(String horafin) {
-        this.horafin = horafin;
-    }
 
-    public String getHorasdiurnas() {
-        return horasdiurnas;
-    }
-
-    public void setHorasdiurnas(String horasdiurnas) {
-        this.horasdiurnas = horasdiurnas;
-    }
-
-    public String getRenddiurno() {
-        return renddiurno;
-    }
-
-    public void setRenddiurno(String renddiurno) {
-        this.renddiurno = renddiurno;
-    }
-
-    public String getHorasnocturas() {
-        return horasnocturas;
-    }
-
-    public void setHorasnocturas(String horasnocturas) {
-        this.horasnocturas = horasnocturas;
-    }
-
-    public String getRendnocturno() {
-        return rendnocturno;
-    }
-
-    public void setRendnocturno(String rendnocturno) {
-        this.rendnocturno = rendnocturno;
-    }
 }

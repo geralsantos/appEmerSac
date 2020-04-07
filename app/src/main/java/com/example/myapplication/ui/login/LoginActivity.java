@@ -27,6 +27,8 @@ import android.widget.Toast;
 
 import com.example.myapplication.Config.Config;
 import com.example.myapplication.Interface.ApiService;
+import com.example.myapplication.Interface.Message;
+import com.example.myapplication.Interface.myDbAdapter;
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.data.model.LoggedInUser;
@@ -41,22 +43,25 @@ public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
     private ApiService servicio = Config.getRetrofit().create(ApiService.class);
-
+    EditText usernameEditText;
+    EditText passwordEditText;
+    myDbAdapter helper;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        helper = new myDbAdapter(this);
+        isLogged();
+
         loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
 
-        final EditText usernameEditText = findViewById(R.id.username);
-        final EditText passwordEditText = findViewById(R.id.password);
+        usernameEditText =(EditText) findViewById(R.id.username);
+        passwordEditText =(EditText) findViewById(R.id.password);
         final Button loginButton = findViewById(R.id.login);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
 
-        SharedPreferences preferences = getSharedPreferences("GERAL",MODE_PRIVATE);
        // String usuario = preferences.getString()
-
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override
             public void onChanged(@Nullable LoginFormState loginFormState) {
@@ -137,6 +142,35 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+    public void addUser()
+    {
+        String t1 = usernameEditText.getText().toString();
+        String t2 = passwordEditText.getText().toString();
+        if(t1.isEmpty() || t2.isEmpty())
+        {
+            Log.d("addUser","Enter Both Name and Password");
+            Message.message(getApplicationContext(),"Debe llenar el usuario/contraseña");
+        }
+        else
+        {
+            Log.d("addUser",t1+t2+"");
+            long id = helper.insertData(t1,t2);
+            if(id<=0)
+            {
+                Message.message(getApplicationContext(),"Insertion Unsuccessful");
+            }
+        }
+    }
+
+    public void isLogged()
+    {
+        String data = helper.getData();
+        if(!data.isEmpty()){
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        }
+    }
+
     public void login(final String usuario, final String password){
         Call<LoggedInUser> call = servicio.Login(usuario,password);
         call.enqueue(new Callback<LoggedInUser>() {
@@ -154,6 +188,9 @@ public class LoginActivity extends AppCompatActivity {
                     editor.putString("empleado_apellidos",response.body().getApellidos());
                     editor.putInt("usuario_id",response.body().getId());
                     editor.commit();
+
+                    addUser();
+                    Log.d("LOGIN",response.body()+"");
                     loginViewModel.login(response.body().getNombres(), password);
                 }else{
                     loginViewModel.login("","");

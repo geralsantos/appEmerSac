@@ -24,10 +24,10 @@
         tools:layout="@layout/fragment_actividades_registradas" />
 
     <fragment
-        android:id="@+id/nav_share"
-        android:name="com.example.myapplication.ui.share.ShareFragment"
-        android:label="@string/menu_share"
-        tools:layout="@layout/fragment_share" />
+        android:id="@+id/nav_tareo_actividades"
+        android:name="com.example.myapplication.ui.tareo_actividades.TareoActividadesFragment"
+        android:label="@string/menu_tareo_actividades"
+        tools:layout="@layout/fragment_tareo_actividades" />
 
     <fragment
         android:id="@+id/nav_send"

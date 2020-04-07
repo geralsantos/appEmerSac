@@ -12,7 +12,14 @@
             android:id="@+id/nav_geomap_montaje"
             android:icon="@drawable/ic_map_24px"
             android:title="@string/menu_geolocalizacion_montaje" />
-
+        <item
+            android:id="@+id/nav_actividades_registradas"
+            android:icon="@drawable/ic_act_registradas"
+            android:title="@string/menu_actividades_registradas" />
+        <item
+            android:id="@+id/nav_tareo_actividades"
+            android:icon="@drawable/ic_act_registradas"
+            android:title="@string/menu_tareo_actividades" />
     </group>
 
     <item android:title="Configuración">

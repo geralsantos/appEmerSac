@@ -58,7 +58,7 @@ public class AudioRecorderFragment extends Fragment {
     Handler timerHandler = new Handler();
     boolean mStartRecording = true;
     boolean mPauseRecording = false;
-
+    Integer proyecto_id=null;
     Runnable timerRunnable = new Runnable() {
 
         @Override
@@ -158,9 +158,10 @@ public class AudioRecorderFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        Bundle args = getArguments();
+        proyecto_id = args.getInt("proyecto_id", 0);
         // Record to the external cache directory for visibility
-        String root = conf.getRutaArchivos();
+        String root = conf.getRutaArchivos()+proyecto_id+"/";
         Calendar c = Calendar.getInstance(); SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
         String strDate = sdf.format(c.getTime());
         fileName = root+"Audios/";
