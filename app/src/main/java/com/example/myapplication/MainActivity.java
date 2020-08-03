@@ -41,16 +41,18 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements LocationListener {
+public class MainActivity extends AppCompatActivity {
     TextView nombreusuario;
     /*FrameLayout framegeo;
     MenuItem menu1;*/
@@ -61,11 +63,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     SharedPreferences pref = null;
     private AppBarConfiguration mAppBarConfiguration;
     MenuItem menuItemAnterior = null;
-    Boolean x = false;
 
+
+    Handler handler = new Handler(); // declared before onCreate
+    Runnable myRunnable = null;
     private LocationManager locationManager;
     private LocationListener listener;
-
+    String latitude=null, longitude=null;
+    private static  final int REQUEST_LOCATION=1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,28 +96,47 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                Fragment fragment = null;
+                //Fragment fragment = null;
+
                 if (menuItemAnterior == null ? true : (menuItemAnterior.getItemId() != menuItem.getItemId())) {
                     menuItemAnterior = menuItem;
                 } else {
-                    // x=true;
-
                     return false;
                 }
-                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                //FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
                 switch (menuItem.getItemId()) {
                     case R.id.nav_tareo_colab:
-                        fragment = new TareoTrabajadorFragment();
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.content_frame, new TareoTrabajadorFragment())
+                                .addToBackStack(null)
+                                .commit();
+                        //fragment = new TareoTrabajadorFragment();
                         break;
                     case R.id.nav_geomap_montaje:
-                        fragment = new GeolocalizacionMontajeFragment();
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.content_frame, new GeolocalizacionMontajeFragment())
+                                .addToBackStack(null)
+                                .commit();
+                        //fragment = new GeolocalizacionMontajeFragment();
                         break;
                     case R.id.nav_actividades_registradas:
-                        fragment = new ActividadesRegistradasFragment();
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.content_frame, new ActividadesRegistradasFragment())
+                                .addToBackStack(null)
+                                .commit();
+                        //fragment = new ActividadesRegistradasFragment();
                         break;
                     case R.id.nav_tareo_actividades:
-                        fragment = new TareoActividadesFragment();
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.content_frame, new TareoActividadesFragment())
+                                .addToBackStack(null)
+                                .commit();
+                        //fragment = new TareoActividadesFragment();
 
                         break;
                     case R.id.nav_salir:
@@ -133,11 +157,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                         alertDialog.show();
                         break;
                 }
-                if (fragment != null) {
+                /*if (fragment != null) {
                     ft.add(R.id.content_frame, fragment);
                     ft.addToBackStack(null);
                     ft.commit();
-                }
+                }*/
                 drawer.closeDrawer(GravityCompat.START);
 
                 return true;
@@ -145,10 +169,125 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
             ;
         });
-
+        verifyGPSON();
     }
 
+    private void verifyGPSON(){
+        Log.d("verifyGPSON1","verifyGPSON");
+        locationManager=(LocationManager) this.getSystemService(this.LOCATION_SERVICE);
+        //Check gps is enable or not
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+        {
+            //Write Function To enable gps
+            onGPS();
+        }
+        else
+        {
+            //GPS is already On then
+            getLocation();
+        }
+    }
 
+    private void getLocation(){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) !=PackageManager.PERMISSION_GRANTED)
+        {
+            ActivityCompat.requestPermissions(this,new String[]
+                    {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+        }
+        else
+        {
+            locationManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
+            handler =  new Handler();
+            handler.removeCallbacks(myRunnable);
+            myRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(), "No se ha podido identificar su gps", Toast.LENGTH_LONG).show();
+                    locationManager.removeUpdates(listener);
+                }
+            };
+            handler.postDelayed(myRunnable,10000);
+            listener = new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    double lat=location.getLatitude();
+                    double longi=location.getLongitude();
+                    handler.removeCallbacks(myRunnable);
+                    latitude=lat+"";
+                    longitude=longi+"";
+                    locationManager.removeUpdates(listener);
+                }
+                @Override
+                public void onStatusChanged(String s, int i, Bundle bundle) {
+                }
+
+                @Override
+                public void onProviderEnabled(String s) {
+                }
+
+                @Override
+                public void onProviderDisabled(String s) {
+                    Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(i);
+                }
+            };
+            locationManager.requestLocationUpdates("gps", 2000, 0, listener);
+            Location LocationGps= locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            Location LocationNetwork=locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            Location LocationPassive=locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+            if (LocationGps !=null)
+            {
+                double lat=LocationGps.getLatitude();
+                double longi=LocationGps.getLongitude();
+                handler.removeCallbacks(myRunnable);
+                latitude=lat+"";
+                longitude=longi+"";
+                locationManager.removeUpdates(listener);
+            }
+            else if (LocationNetwork !=null)
+            {
+                double lat=LocationNetwork.getLatitude();
+                double longi=LocationNetwork.getLongitude();
+                handler.removeCallbacks(myRunnable);
+                latitude=lat+"";
+                longitude=longi+"";
+                locationManager.removeUpdates(listener);
+            }
+            else if (LocationPassive !=null)
+            {
+                double lat=LocationPassive.getLatitude();
+                double longi=LocationPassive.getLongitude();
+                handler.removeCallbacks(myRunnable);
+                latitude=""+lat;
+                longitude=""+longi;
+                locationManager.removeUpdates(listener);
+            }else{
+                Toast.makeText(getApplicationContext(), "Verifique que su gps funcione correctamente", Toast.LENGTH_LONG).show();
+            }
+
+        }
+    }
+
+    public void onGPS(){
+        final AlertDialog.Builder builder= new AlertDialog.Builder(this);
+        builder.setTitle("Habilitar GPS");
+        builder.setMessage("Esta aplicación funciona con gps, favor de habilitarlo.").setCancelable(false).setPositiveButton("Habilitar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+            }
+        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                finish();
+            }
+        });
+        final AlertDialog alertDialog=builder.create();
+        alertDialog.show();
+    }
 
     public void delete(String uname)
     {
@@ -223,27 +362,4 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-        if (provider.equals(LocationManager.GPS_PROVIDER)) {
-            if (status == LocationProvider.OUT_OF_SERVICE) {
-            } else {
-            }
-        }
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
-    }
 }

@@ -34,7 +34,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.os.Environment;
-import android.os.FileUtils;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.provider.MediaStore;
@@ -94,6 +93,8 @@ import java.util.Locale;
 import com.example.myapplication.config;
 import com.example.myapplication.ui.gallery.GalleryViewModel;
 import com.google.gson.Gson;
+import com.iceteck.silicompressorr.FileUtils;
+import com.iceteck.silicompressorr.SiliCompressor;
 
 import org.json.JSONObject;
 
@@ -189,6 +190,9 @@ public class GeolocalizacionMontajeFragment extends Fragment {
     LocationListener listener;
     Handler handler = new Handler(); // declared before onCreate
     Runnable myRunnable = null;
+
+    private String pictureImagePath = "";
+
     public void openDialog(){
         // setup the alert builder
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -224,9 +228,9 @@ public class GeolocalizacionMontajeFragment extends Fragment {
 
         Boolean[] arr = {spinner_geo_montaje_listado_proyectos.getSelectedItemPosition()==0,
                 spinner_geo_montaje_listado_estados_proyecto.getSelectedItemPosition()==0,
-                edittext_geo_montaje_descripcion.getText().toString().matches(""),(longitude==""||latitude==""),isVideoSaving,isFotoSaving};
+                (longitude==""||latitude==""),isVideoSaving,isFotoSaving};
         String[] arrmsj = {"Seleccione un proyecto","Seleccione un estado del proyecto",
-                "Ingrese una descripción","Habilite el gps y vuelva a entrar a la aplicación",
+                "Habilite el gps y vuelva a entrar a la aplicación",
                 "El video se está guardando, por favor espere...","La foto se está guardando, por favor espere..."};
         Log.d("guardarxd",""+arr.length);
         Log.d("guardarxd",""+arr.length);
@@ -954,6 +958,65 @@ Log.d("wwww","");
         Calendar c = Calendar.getInstance(); SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
         String strDate = sdf.format(c.getTime());
         switch (actionActive){
+           case "android.media.action.IMAGE_CAPTURE":
+                //isFotoSaving=true;
+                myDir = new File(root+"Fotos/");
+                myDir.mkdirs();
+                fname = "Image_"+strDate+".jpeg";
+                file = new File (myDir, fname);
+                //
+                try {
+                        Bitmap bm = BitmapFactory.decodeFile(pictureImagePath);
+                        ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+                        bm.compress(Bitmap.CompressFormat.JPEG, 100, bOut);
+                        String base64Image = Base64.encodeToString(bOut.toByteArray(), Base64.DEFAULT);
+
+                    byte[] byteCode = Base64.decode(base64Image,Base64.DEFAULT);
+                    Bitmap imageBitmap = BitmapFactory.decodeByteArray(byteCode,0,byteCode.length);
+                    Bitmap img = Bitmap.createScaledBitmap(imageBitmap,500,500,true);
+
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    img.compress(Bitmap.CompressFormat.PNG, 0, bos);
+                    byte[] bitmapdata = bos.toByteArray();
+                    FileOutputStream fos = new FileOutputStream(file);
+                    fos.write(bitmapdata);
+                    fos.flush();
+                    fos.close();
+                    borrarArchivoSubido(pictureImagePath);
+                    /*Bitmap imageBitmap = (Bitmap) intentData.getExtras().get("data");
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    imageBitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
+                    byte[] bitmapdata = bos.toByteArray();
+                    FileOutputStream fos = new FileOutputStream(file);
+                    fos.write(bitmapdata);
+                    fos.flush();
+                    fos.close();*/
+                    /*byte[] byteCode = Base64.decode(pictureImagePath,Base64.DEFAULT);
+                    Bitmap imageBitmap = BitmapFactory.decodeByteArray(byteCode,0,byteCode.length);
+                    Bitmap img = Bitmap.createScaledBitmap(imageBitmap,100,100,true);
+
+                    FileOutputStream out = new FileOutputStream(file);
+
+                    out = getContext().openFileOutput("imageName.png", Context.MODE_PRIVATE);
+                    byte[] decodedString = android.util.Base64.decode(byteCode, android.util.Base64.DEFAULT);
+                    fos.write(decodedString);
+                    fos.flush();
+                    fos.close();*/
+
+                    /*Bitmap imageBitmap = (Bitmap) intentData.getExtras().get("data");
+                    FileOutputStream out = new FileOutputStream(file);
+
+                    imageBitmap.compress(Bitmap.CompressFormat.PNG,100,out);
+                   // imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+                    out.flush();
+                    out.close();
+                   // imageBitmap = ImageUtils.getInstant().getCompressedBitmap(root+"Fotos/"+fname);
+                    //imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+                    isFotoSaving=false;*/
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
           /*  case "android.media.action.IMAGE_CAPTURE":
                 isFotoSaving=true;
 
@@ -1024,7 +1087,17 @@ Log.d("wwww","");
             startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
         }
     }
-    private String pictureImagePath = "";
+    public void llamarIntentCamara2(){
+        if (proyecto_id==0){
+            Toast.makeText(getActivity(),"Debe seleccionar un proyecto",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        actionActive = MediaStore.ACTION_IMAGE_CAPTURE;
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
     public void llamarIntentCamara(){
         if (proyecto_id==0){
             Toast.makeText(getActivity(),"Debe seleccionar un proyecto",Toast.LENGTH_SHORT).show();
@@ -1034,16 +1107,38 @@ Log.d("wwww","");
         StrictMode.setVmPolicy(builder.build());
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
-        String imageFileName = timeStamp + ".jpeg";
+        String imageFileName = timeStamp + ".png";
 
         /*File storageDir = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES);*/
         String storageDir = conf.getRutaArchivos()+proyecto_id+"/";
         pictureImagePath = storageDir + "Fotos/" + imageFileName;
-
         File file = new File(pictureImagePath);
 
+
+
+        /*FileOutputStream out = new FileOutputStream(file);
+
+        out = getContext().openFileOutput("imageName.png", Context.MODE_PRIVATE);
+        byte[] decodedString = android.util.Base64.decode(byteCode, android.util.Base64.DEFAULT);
+        fos.write(decodedString);
+        fos.flush();
+        fos.close();*/
+
+        /*try {
+            byte[] byteCode = Base64.decode(pictureImagePath,Base64.DEFAULT);
+            Bitmap imageBitmap = BitmapFactory.decodeByteArray(byteCode,0,byteCode.length);
+            Bitmap img = Bitmap.createScaledBitmap(imageBitmap,100,100,true);
+
+            file.createNewFile();
+            FileOutputStream fo = new FileOutputStream(file);
+            fo.write(img.toByteArray());
+        }catch (Exception e){
+
+        }*/
+
         Uri outputFileUri = Uri.fromFile(file);
+
         Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
 
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
@@ -1064,7 +1159,7 @@ Log.d("wwww","");
                     verifyStoragePermissions(getActivity());
                    /* if (isStoragePermissionGranted()){
                         */intentData = data;
-                        //saveToInternalStorage();
+                        saveToInternalStorage();
                         llamarIntentVerArchivos();/*
                     }*/
                 }

@@ -40,15 +40,20 @@ public interface ApiService {
     Call<List<clsSolid>> getSolids(
             @Path("proyecto_id") Integer proyecto_id
     );
-
+    /*@GET("produccion/tipoproyectos/ver/{tipo}")
+    Call<List<clsProyecto>> getTiposProyectos(
+            @Path("proyecto_id") Integer proyecto_id
+    );*/
     @GET("montaje/estados/ver/")
     Call<List<clsEstadoProyecto>> getEstadosProyecto();
 
     @GET("montaje/incidencias/ver/")
     Call<List<clsIncidencia>> getIncidenciasProyecto();
 
-    @GET("produccion/proyectos/ver/")
-    Call<List<clsProyecto>> getProyectosProduccion();
+    @GET("produccion/proyectos/ver/{tipo}")
+    Call<List<clsProyecto>> getProyectosProduccion(
+            @Path("tipo") Integer tipo
+    );
 
     @GET("produccion/tareas/ver/")
     Call<List<clsTarea>> getTareasProyecto();
@@ -66,7 +71,9 @@ public interface ApiService {
             @Field("horas_trabajadas") String horas_trabajadas,
             @Field("empleados[]") Integer[] empleados,
             @Field("usuario_id") Integer usuario_id,
-            @Field("solid_id") Integer solid_id
+            @Field("solid_id") Integer solid_id,
+            @Field("tipo") Integer tipo
+
     );
 
     @Multipart
@@ -101,8 +108,10 @@ public interface ApiService {
     Call<List<clsMontCronograma>> getCronograma(
             @Path("proyecto_id") Integer proyecto_id
     );
-    @GET("produccion/tareo/listado/")
-    Call<List<clsTareoActividad>> getTareoActividades();
+    @GET("produccion/tareo/listado/{usuario_id}")
+    Call<List<clsTareoActividad>> getTareoActividades(
+            @Path("usuario_id") Integer usuario_id
+    );
 
     @POST("produccion/tareo/editar/")
     @FormUrlEncoded

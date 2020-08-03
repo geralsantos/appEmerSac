@@ -12,7 +12,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.text.Editable;
 import android.text.InputFilter;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,7 +60,9 @@ public class TareoTrabajadorFragment extends Fragment {
     Spinner spinner_tareo_trabajador_listado_actividades;
     Spinner spinner_tareo_trabajador_listado_proyectos;
     Spinner spinner_tareo_trabajador_listado_solid;
-
+    Spinner spinner_tareo_trabajador_tipo;
+    List<String> spinnerArrayTipoProyectos;
+    ArrayAdapter<String> adapterTipoProyectos;
     EditText etHorainicio ,etMinInicio , etHoraFin ,etMinFin ;
 
     public static TareoTrabajadorFragment newInstance() {
@@ -188,7 +192,7 @@ public class TareoTrabajadorFragment extends Fragment {
         Log.d("hora_inicio",hora_inicio);
         String horas_trabajadas="";
         String hora_fin="";
-
+        Integer tipo = spinner_tareo_trabajador_tipo.getSelectedItemPosition()+1;
         if(!etHoraFin.getText().toString().matches("") && !etMinFin.getText().toString().matches("")){
             hora = Integer.parseInt(etHoraFin.getText().toString());
             minuto = Integer.parseInt(etMinFin.getText().toString());
@@ -221,7 +225,7 @@ public class TareoTrabajadorFragment extends Fragment {
 
         Integer usuario_id= sharedPreferences.getInt("usuario_id",10);
         Call<clsTrabajador> call = servicio.guardarTareo(
-                proyecto_id,tarea_id,hora_inicio,hora_fin,horas_trabajadas,newpersonas_id,usuario_id,solid_id
+                proyecto_id,tarea_id,hora_inicio,hora_fin,horas_trabajadas,newpersonas_id,usuario_id,solid_id,tipo
         );
         loadingProgressBar.setVisibility(View.VISIBLE);
         componenteEnabled(false);
@@ -284,6 +288,14 @@ public class TareoTrabajadorFragment extends Fragment {
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
                 // user checked or unchecked a box
                 personasSelected[which] = isChecked;
+                Integer co = 0;
+                for (int i = 0;i<personasSelected.length;i++){
+                    if (personasSelected[i]){
+                       co++;
+                    }
+                }
+                String t = co>0?(co==1?co+" TRABAJADOR SELECCIONADO":co+" TRABAJADORES SELECCIONADOS"):"SELECCIONE TRABAJADOR";
+                btnAbrirDialogSelectPerson.setText(t);
             }
         });
 // add OK and Cancel buttons
@@ -323,7 +335,47 @@ public class TareoTrabajadorFragment extends Fragment {
         btnAbrirDialogSelectPerson = (Button) getView().findViewById(R.id.btn_abrir_dialog_seleccione_trabajador);
         btnGuardar = (Button) getView().findViewById(R.id.btn_guardar_actividad);
         loadingProgressBar = getView().findViewById(R.id.loading);
+        spinner_tareo_trabajador_tipo = (Spinner) getView().findViewById(R.id.spinner_tareo_trabajador_tipo);
+        spinnerArrayTipoProyectos =  new ArrayList<String>();
+        spinnerArrayTipoProyectos.add("PRODUCCIÓN");
+        spinnerArrayTipoProyectos.add("MONTAJE");
+        adapterTipoProyectos = new ArrayAdapter<String>( getActivity(), R.layout.spinner_text_color, spinnerArrayTipoProyectos);
+        adapterTipoProyectos.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_tareo_trabajador_tipo.setAdapter(adapterTipoProyectos);
+        etHoraFin.addTextChangedListener(new TextWatcher() {
 
+            public void afterTextChanged(Editable s) {
+                if (s.length()==2){
+                    etMinFin.requestFocus();
+                }
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        });
+        etHorainicio.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                if (s.length()==2){
+                    etMinInicio.requestFocus();
+                }
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        });
+        spinner_tareo_trabajador_tipo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                try {
+                    listadoProyectos();
+                }catch (Exception ex){
+                    Toast.makeText(getActivity(),"Hubo un error al mostrar los proyectos",Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         spinner_tareo_trabajador_listado_proyectos.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -438,7 +490,9 @@ public class TareoTrabajadorFragment extends Fragment {
 
     }
     public void listadoProyectos(){
-        final Call<List<clsProyecto>> proyectos = servicio.getProyectosProduccion();
+        int position = spinner_tareo_trabajador_tipo.getSelectedItemPosition();
+        Log.d("position",position+"--");
+        final Call<List<clsProyecto>> proyectos = servicio.getProyectosProduccion(position);
         proyectos.enqueue(new Callback<List<clsProyecto>>() {
             @Override
             public void onResponse(Call<List<clsProyecto>> call, Response<List<clsProyecto>> response) {
@@ -520,6 +574,8 @@ public class TareoTrabajadorFragment extends Fragment {
         spinner_tareo_trabajador_listado_proyectos.setSelection(0);
         spinner_tareo_trabajador_listado_solid.setSelection(0);
         spinner_tareo_trabajador_listado_actividades.setSelection(0);
+        spinner_tareo_trabajador_tipo.setSelection(0);
+        btnAbrirDialogSelectPerson.setText("SELECCIONE TRABAJADOR");
         for (int i = 0;i<personas.length;i++){
             personasSelected[i] = false;
         }

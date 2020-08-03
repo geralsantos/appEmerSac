@@ -4,7 +4,7 @@
     android:layout_width="350dp"
     android:layout_height="280dp"
     android:orientation="vertical"
-    android:background="@drawable/curve_shap"
+    android:background="#fff"
     >
     <TextView
         android:id="@+id/txt_titulo_dialog"
@@ -16,7 +16,6 @@
         android:layout_marginLeft="15dp"
         app:fontFamily="@font/latoregular"
         android:textColor="#0050B2"
-        android:layout_below="@+id/edittext_mininicio"
 
         />
 

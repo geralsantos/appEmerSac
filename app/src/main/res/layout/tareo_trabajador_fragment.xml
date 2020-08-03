@@ -20,13 +20,22 @@
             android:layout_height="match_parent"
             android:layout_margin="5dp"
             >
+            <Spinner
+                android:id="@+id/spinner_tareo_trabajador_tipo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
 
+                android:layout_marginTop="20dp"
+                app:fontFamily="@font/latoregular"
+                style="@style/Widget.AppCompat.Spinner.Underlined"
+                />
             <Spinner
                 android:id="@+id/spinner_tareo_trabajador_listado_proyectos"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:fontFamily="@font/latoregular"
                 android:layout_marginTop="5dp"
+                android:layout_below="@+id/spinner_tareo_trabajador_tipo"
                 style="@style/Widget.AppCompat.Spinner.Underlined"
 
                 />
@@ -60,6 +69,7 @@
                 app:fontFamily="@font/latoregular"
                 style="@style/Widget.AppCompat.Spinner.Underlined"
                 />
+
             <Button
                 android:id="@+id/btn_abrir_dialog_seleccione_trabajador"
                 android:layout_width="match_parent"

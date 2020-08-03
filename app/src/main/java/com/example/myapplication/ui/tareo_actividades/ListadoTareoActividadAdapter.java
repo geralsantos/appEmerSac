@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.data.model.clsTareoActividad;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ListadoTareoActividadAdapter extends BaseAdapter {
@@ -28,13 +29,14 @@ public class ListadoTareoActividadAdapter extends BaseAdapter {
         TextView textViewHoraInicio;
         TextView textViewNombreSolid;
         TextView textViewNombreTarea;
+        TextView textViewEmpleados;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
         }
     }
 
-    public ListadoTareoActividadAdapter(Context contexto, List<clsTareoActividad> rowItems) {
+    public ListadoTareoActividadAdapter(Context contexto, ArrayList<clsTareoActividad> rowItems) {
         this.contexto = contexto;
         this.rowItems = rowItems;
     }
@@ -65,7 +67,7 @@ public class ListadoTareoActividadAdapter extends BaseAdapter {
         ;
         String ruta_imagen = "";
         if (convertView == null){
-            convertView = mInflater.inflate(R.layout.tareo_actividad_fila_fragment, null,false);
+            convertView = mInflater.inflate(R.layout.tareo_actividad_fila_fragment2, null,false);
         }else{
             viewHolder = (ListadoTareoActividadAdapter.ViewHolder)convertView.getTag();
         }
@@ -76,12 +78,14 @@ public class ListadoTareoActividadAdapter extends BaseAdapter {
 
         viewHolder.textViewNombreSolid = (TextView)convertView.findViewById(R.id.value_solidnombre);
         viewHolder.textViewNombreTarea = (TextView)convertView.findViewById(R.id.value_tareanombre);
+        viewHolder.textViewEmpleados = (TextView)convertView.findViewById(R.id.value_empleadonombre);
 
         clsTareoActividad row_pos = rowItems.get(position);
         viewHolder.textViewProyecto.setText(row_pos.getProyecto_nombre());
         viewHolder.textViewHoraInicio.setText(row_pos.getHora_inicio());
         viewHolder.textViewNombreSolid.setText(row_pos.getSolid_nombre());
         viewHolder.textViewNombreTarea.setText(row_pos.getTarea_nombre()+"");
+        viewHolder.textViewEmpleados.setText(row_pos.getEmpleados()+"");
 
         convertView.setTag(viewHolder);
         return convertView;

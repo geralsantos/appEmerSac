@@ -5,12 +5,13 @@ public class clsTareoActividad {
 
     private Integer id;
 
-    public clsTareoActividad(Integer id, String hora_inicio, String proyecto_nombre, String solid_nombre, String tarea_nombre) {
+    public clsTareoActividad(Integer id, String hora_inicio, String proyecto_nombre, String solid_nombre, String tarea_nombre,String empleados) {
         this.id = id;
         this.hora_inicio = hora_inicio;
         this.proyecto_nombre = proyecto_nombre;
         this.solid_nombre = solid_nombre;
         this.tarea_nombre = tarea_nombre;
+        this.empleados = empleados;
     }
 
     private String hora_inicio;
@@ -58,6 +59,16 @@ public class clsTareoActividad {
     private String proyecto_nombre;
     private String solid_nombre;
     private String tarea_nombre;
+
+    public String getEmpleados() {
+        return empleados;
+    }
+
+    public void setEmpleados(String empleados) {
+        this.empleados = empleados;
+    }
+
+    private String empleados;
 
 
 }
